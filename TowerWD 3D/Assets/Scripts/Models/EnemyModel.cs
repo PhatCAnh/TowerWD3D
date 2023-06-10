@@ -1,12 +1,6 @@
 using CanasSource;
 using UnityEngine;
 
-public enum EnemyType
-{
-    Normal,
-    Fly,
-    Boss
-}
 
 public class EnemyModel
 {

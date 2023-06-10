@@ -47,7 +47,7 @@ public class TargetBullet : Bullet
             targetPos = target.transform.position;
         }
         Vector3 direction = (targetPos - transform.position).normalized;
-        transform.Translate(stat.moveSpeed.Value * Time.deltaTime * direction, Space.World);
+        transform.Translate(stat.moveSpeed.Value * deltaTime * direction, Space.World);
 
         if (bulletDirectionType == BulletDirectionType.lookAt)
         {

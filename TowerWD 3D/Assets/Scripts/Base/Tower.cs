@@ -20,7 +20,7 @@ public enum TypeTargetTower
 
 public abstract class Tower : MonoBehaviour
 {
-    protected CircleCollider2D theCC;
+    protected SphereCollider theCC;
     public TowerState state { get; protected set; }
     public TypeTargetTower typeTarget;
     //public TowerModel model { get; private set; }
@@ -28,7 +28,7 @@ public abstract class Tower : MonoBehaviour
     public Enemy target { get; protected set; }
     public Cooldown attackCooldown { get; protected set; } = new();
     private bool isStop;
-    public List<Enemy> listEnemy = new();
+    protected List<Enemy> listEnemy = new();
 
 
     [SerializeField] protected Transform firePointPos;
@@ -37,7 +37,7 @@ public abstract class Tower : MonoBehaviour
     {
         //model = _model;
         stat = _stat;
-        theCC = GetComponent<CircleCollider2D>();
+        theCC = GetComponent<SphereCollider>();
         theCC.radius = stat.atkRange.Value;
     }
 
@@ -55,7 +55,17 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual void LogicUpdate(float deltaTime)
     {
+        attackCooldown.Update(deltaTime);
 
+        switch (SetTowerState())
+        {
+            case TowerState.Idle:
+                UpdateIdle();
+                break;
+            case TowerState.Attack:
+                UpdateAttack();
+                break;
+        }
     }
 
     protected virtual void PhysicUpdate(float deltaTime)
@@ -63,53 +73,95 @@ public abstract class Tower : MonoBehaviour
 
     }
 
+    protected virtual TowerState SetTowerState()
+    {
+        if (target == null) return TowerState.Idle;
+        return TowerState.Attack;
+    }
+
+    protected virtual void UpdateAttack()
+    {
+        if (attackCooldown.isFinished)
+        {
+            attackCooldown.Restart(stat.atkSpeed.Value);
+            Attack();
+        }
+    }
+
+    protected virtual void UpdateIdle()
+    {
+        switch (typeTarget)
+        {
+            case TypeTargetTower.First:
+                target = GetFirstEnemy();
+                break;
+            case TypeTargetTower.Last:
+                target = GetLastEnemy();
+                break;
+            case TypeTargetTower.Strongest:
+                target = GetStrongestEnemy();
+                break;
+            case TypeTargetTower.Weakest:
+                target = GetWeakestEnemy();
+                break;
+            case TypeTargetTower.Random:
+                target = GetRandomEnemy();
+                break;
+        }
+    }
+
+    protected virtual void Attack()
+    {
+        SpawnBullet();
+    }
+
+    public Bullet SpawnBullet()
+    {
+        Bullet bullet = Instantiate(bulletPrefab, firePointPos.position, Quaternion.identity, firePointPos);
+        bullet.Init(this, new BulletStat(stat.atk.Value, stat.ProjectileSpeed.Value), target);
+        return bullet;
+    }
+
+    protected virtual void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            listEnemy.Add(other.GetComponent<Enemy>());
+        }
+    }
+
+    protected virtual void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            listEnemy.Remove(other.GetComponent<Enemy>());
+            target = null;
+        }
+    }
+
     protected Enemy GetFirstEnemy()
     {
-        if (listEnemy.Count != 0)
-        {
-            return listEnemy.Where(enemy => enemy != null).First();
-        }
-        return null;
+        return listEnemy.FirstOrDefault(enemy => enemy.isAlive);
     }
 
     protected Enemy GetLastEnemy()
     {
-        if (listEnemy.Count != 0)
-        {
-            return listEnemy.Where(enemy => enemy != null).Last();
-        }
-        return null;
+        return listEnemy.LastOrDefault(enemy => enemy.isAlive);
     }
 
     protected Enemy GetStrongestEnemy()
     {
-        {
-            if (listEnemy.Count != 0)
-            {
-                var max = listEnemy.Max(e => e.stat.currentHP.Value);
-                return listEnemy.Where(e => e.stat.currentHP.Value == max).First();
-            }
-            return null;
-        }
+        return listEnemy.FirstOrDefault(enemy => enemy.stat.currentHP.Value == listEnemy.Max(e => e.stat.currentHP.Value));
     }
 
     protected Enemy GetWeakestEnemy()
     {
-        if (listEnemy.Count != 0)
-        {
-            var min = listEnemy.Min(e => e.stat.currentHP.Value);
-            return listEnemy.Where(e => e.stat.currentHP.Value == min).First();
-        }
-        return null;
+        return listEnemy.FirstOrDefault(enemy => enemy.stat.currentHP.Value == listEnemy.Min(e => e.stat.currentHP.Value));
     }
 
     protected Enemy GetRandomEnemy()
     {
-        var randomIndex = Random.Range(0, listEnemy.Count);
-        if (listEnemy[randomIndex]!= null)
-        {
-            return (Enemy)listEnemy[randomIndex];
-        }
-        return null;
+        var list = listEnemy.Where(enemy => enemy.isAlive).ToList();
+        return list[Random.Range(0, list.Count())];
     }
 }

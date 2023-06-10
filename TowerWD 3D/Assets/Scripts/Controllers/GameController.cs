@@ -26,7 +26,7 @@ public class Turn
     private Cooldown turnCoolDown = new Cooldown();
     public float timeCoolDown;
     private int index = 0;
-    [HideInInspector] public WaveState state;
+    public WaveState state;
 
     public void LogicUpdate(float deltaTime)
     {
@@ -80,7 +80,7 @@ public class Wave
     private Cooldown waveCoolDown = new Cooldown();
     public float timeWaveCoolDown;
     private int index = 0;
-    [HideInInspector] public WaveState state;
+    public WaveState state;
 
     public void LogicUpdate(float deltaTime)
     {
@@ -129,7 +129,7 @@ public class AllWave
     private Cooldown allWaveCoolDown = new Cooldown();
     public float timeCoolDown;
     private int index = 0;
-    [HideInInspector] public WaveState state;
+    public WaveState state;
 
     public void LogicUpdate(float deltaTime)
     {
@@ -190,6 +190,11 @@ public class GameController : MonoBehaviour
     public HealthBar PF_Healthbar;
 
     public AllWave wave = new();
+
+    private void Start()
+    {
+        wave.state = WaveState.Start;
+    }
 
     private void Update()
     {
