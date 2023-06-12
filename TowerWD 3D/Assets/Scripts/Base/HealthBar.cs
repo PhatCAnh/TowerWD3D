@@ -18,7 +18,7 @@ public class HealthBar : MonoBehaviour
 
     public void HpChanged()
     {
-        var value = (float) view.stat.currentHP.Value / view.stat.maxHP.Value;
+        var value = (float) view.model.CurrentHp / view.model.MaxHp;
         sldHp.value = value;
         sldHp.gameObject.SetActive(value != 0);
         gameObject.SetActive(view.isAlive);

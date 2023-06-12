@@ -27,7 +27,7 @@ public class EnemyModel
 
     public EnemyModel(EnemyType enemyType, int hp, int armor, float moveSpeed, int coin)
     {
-        _id = Singleton<GameController>.Instance.SetIdForEnemy();
+        //_id = Singleton<GameController>.Instance.SetIdForEnemy();
         _enemyType = enemyType;
         _maxHp = hp;
         _currentHp = hp;
@@ -38,7 +38,7 @@ public class EnemyModel
 
     public EnemyModel(int hp, int armor, float moveSpeed, int coin)
     {
-        _id = Singleton<GameController>.Instance.SetIdForEnemy();
+        //_id = Singleton<GameController>.Instance.SetIdForEnemy();
         _enemyType = EnemyType.Normal;
         _maxHp = hp;
         _currentHp = hp;

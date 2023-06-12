@@ -4,21 +4,20 @@ public class Selection : MonoBehaviour
 {
     Vector2 mousePos;
     Ray ray;
-    RaycastHit2D hit;
+    RaycastHit hit;
+    [SerializeField] private LayerMask layer;
 
     private Transform highlight;
-    private SpriteRenderer theSR_highlight => highlight.GetComponent<SpriteRenderer>();
-    private Transform selection;
-    private SpriteRenderer theSR_selection => selection.GetComponent<SpriteRenderer>();
-    [SerializeField] private Color highlightColor;
-    [SerializeField] private Color selectionColor;
-    private Color originalColor;
+    private MeshRenderer theMR_highlight => highlight.GetComponent<MeshRenderer>();
+    private Node selection;
+
+    [SerializeField] private Material highlightMaterial;
+    private Material originalColor;
     void Update()
     {
-        mousePos = Input.mousePosition;
-        ray = Camera.main.ScreenPointToRay(mousePos);
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(ray.origin, ray.direction * 500f, Color.white);
-        hit = Physics2D.Raycast(ray.origin, Vector2.zero);
+        //hit = Physics.Raycast(ray, out hit);
         Touched();
         Clicked();
     }
@@ -27,25 +26,24 @@ public class Selection : MonoBehaviour
     {
         if (highlight != null)
         {
-            theSR_highlight.color = originalColor;
+            theMR_highlight.material = originalColor;
+            
             highlight = null;
         }
-
-        if (hit && hit.transform.gameObject.layer == 29)
+        if (!Physics.Raycast(ray, out hit, 500f, layer)) return;
+        highlight = hit.transform;
+        if (highlight != selection)
         {
-            highlight = hit.transform;
-            if (highlight != selection)
-            {   
-                if (theSR_highlight.color != highlightColor)
-                {
-                    originalColor = theSR_highlight.color;
-                    theSR_highlight.color = highlightColor;
-                }
-            }
-            else
+            if (theMR_highlight.material != highlightMaterial)
             {
-                highlight = null;
+                originalColor = theMR_highlight.material;
+                theMR_highlight.material = highlightMaterial;
+                
             }
+        }
+        else
+        {
+            highlight = null;
         }
     }
 
@@ -55,17 +53,20 @@ public class Selection : MonoBehaviour
         {
             if (selection != null)
             {
-                theSR_selection.color = originalColor;
+                selection.Close();
                 selection = null;
             }
-            selection = hit.transform;
-            if (hit && hit.transform.gameObject.layer == 29)
+            if(Physics.Raycast(ray, out hit, 500f, layer))
             {
-                theSR_selection.color = selectionColor;
-            }
-            else
-            {
-                selection = null;
+                selection = hit.transform.GetComponentInParent<Node>();
+                if (hit.transform.gameObject.layer == 29)
+                {
+                    selection.Open();
+                }   
+                else
+                {
+                    selection = null;
+                }
             }
         }
     }

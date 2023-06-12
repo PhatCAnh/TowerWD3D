@@ -23,12 +23,13 @@ public abstract class Tower : MonoBehaviour
     protected SphereCollider theCC;
     public TowerState state { get; protected set; }
     public TypeTargetTower typeTarget;
+    public EnemyType[] typeEnemyTarget;
     //public TowerModel model { get; private set; }
     public TowerStat stat { get; private set; }
     public Enemy target { get; protected set; }
     public Cooldown attackCooldown { get; protected set; } = new();
     private bool isStop;
-    protected List<Enemy> listEnemy = new();
+    [SerializeField] protected List<Enemy> listEnemy = new();
 
 
     [SerializeField] protected Transform firePointPos;
@@ -75,8 +76,8 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual TowerState SetTowerState()
     {
-        if (target == null) return TowerState.Idle;
-        return TowerState.Attack;
+        if (target && CheckTypeEnemy(target.type)) return TowerState.Attack;
+        return TowerState.Idle;
     }
 
     protected virtual void UpdateAttack()
@@ -90,6 +91,7 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual void UpdateIdle()
     {
+        listEnemy.RemoveAll(enemy => !enemy.isAlive);
         switch (typeTarget)
         {
             case TypeTargetTower.First:
@@ -122,19 +124,26 @@ public abstract class Tower : MonoBehaviour
         return bullet;
     }
 
+    public bool CheckTypeEnemy(EnemyType enemy)
+    {
+        return typeEnemyTarget.Contains(enemy);
+    }
+
+    //protected abstract void SetTypeEnemyTarget();
+
     protected virtual void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.TryGetComponent(out Enemy enemy) && CheckTypeEnemy(enemy.type))
         {
-            listEnemy.Add(other.GetComponent<Enemy>());
+            listEnemy.Add(enemy);
         }
     }
 
     protected virtual void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.TryGetComponent(out Enemy enemy) && listEnemy.Contains(enemy))
         {
-            listEnemy.Remove(other.GetComponent<Enemy>());
+            listEnemy.Remove(enemy);
             target = null;
         }
     }
@@ -151,12 +160,12 @@ public abstract class Tower : MonoBehaviour
 
     protected Enemy GetStrongestEnemy()
     {
-        return listEnemy.FirstOrDefault(enemy => enemy.stat.currentHP.Value == listEnemy.Max(e => e.stat.currentHP.Value));
+        return listEnemy.FirstOrDefault(enemy => enemy.model.CurrentHp == listEnemy.Max(e => e.model.CurrentHp));
     }
 
     protected Enemy GetWeakestEnemy()
     {
-        return listEnemy.FirstOrDefault(enemy => enemy.stat.currentHP.Value == listEnemy.Min(e => e.stat.currentHP.Value));
+        return listEnemy.FirstOrDefault(enemy => enemy.model.CurrentHp == listEnemy.Min(e => e.model.CurrentHp));
     }
 
     protected Enemy GetRandomEnemy()

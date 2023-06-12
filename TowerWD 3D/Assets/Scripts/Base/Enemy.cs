@@ -10,6 +10,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 public enum EnemyType
 {
     Normal,
+    Hide,
     Fly,
     Boss
 }
@@ -20,39 +21,50 @@ public enum EnemyState
     Idle,
     Move,
     Skill,
-    Hide,
     Die
 }
 
-public class EnemyStat
+[CreateAssetMenu(fileName = "DataEnemiesConfig", menuName = "GameConfiguration/ListEnemyStat")]
+public class DataEnemyStat : ScriptableObject
 {
-    public StatInt maxHP = new();
-    public StatInt currentHP = new();
-    public StatInt armor = new();
-    public StatFloat moveSpeed = new();
-    public StatInt coin = new();
-
-    public EnemyStat(int _hp, int _armor, float _moveSpeed, int _coin)
-    {
-        maxHP.BaseValue = _hp;
-        currentHP.BaseValue = _hp;
-        armor.BaseValue = _armor;
-        moveSpeed.BaseValue = _moveSpeed;
-        coin.BaseValue = _coin;
-    }
+    public List<EnemyStat> listData;
 }
 
+[CreateAssetMenu(fileName = "PrefabEnemiesConfig", menuName = "GameConfiguration/ListEnemyPrefab")]
+public class DataEnemyPrefab : ScriptableObject
+{
+    public List<EnemyPrefab> listPrefab;
+}
+
+[Serializable]
+public class EnemyPrefab
+{
+    public string id;
+    public Enemy prefab;
+}
+
+[Serializable]
+public class EnemyStat
+{
+    public string id;
+    public int HealthPoint;
+    public int armor;
+    public float moveSpeed;
+    public int coin;
+
+}
 public abstract class Enemy : MonoBehaviour
 {
     protected Animator anim;
     protected Rigidbody theRB;
-    public HealthBar healthBar { get ; protected set; }
-    public Transform target { get ; protected set; }
-    public EnemyState state {  get; protected set; }
+    public HealthBar healthBar { get; protected set; }
+    public Transform target { get; protected set; }
+    public EnemyState state { get; protected set; }
     public EnemyModel model { get; protected set; }
     public EnemyStat stat { get; private set; }
-    public bool isAlive => stat.currentHP.Value > 0;
-    public bool isFullHp => stat.currentHP.Value >= stat.maxHP.Value;
+    public EnemyType type;
+    public bool isAlive => model.CurrentHp > 0;
+    public bool isFullHp => model.CurrentHp >= model.MaxHp;
     public Food isPicked { get; protected set; }
     public GameController gameController => Singleton<GameController>.Instance;
 
@@ -60,7 +72,7 @@ public abstract class Enemy : MonoBehaviour
     protected int index;
 
     public bool isStop;
-  
+
     public List<Effect> negativeEffect = new();
     public List<Effect> positiveEffect = new();
 
@@ -70,9 +82,6 @@ public abstract class Enemy : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         theRB = GetComponent<Rigidbody>();
-        /*HealthBar hb = Instantiate(Singleton<GameController>.Instance.PF_Healthbar);
-        hb.Init(this);
-        Init(0, new EnemyModel(350, 0, 1, 10), hb);*/
     }
 
     private void Update()
@@ -111,18 +120,18 @@ public abstract class Enemy : MonoBehaviour
     }
     #endregion
 
-    public void Init(int pathPoint , EnemyModel model, HealthBar hpView)
+    public void Init(int pathPoint, EnemyStat stat, HealthBar hpView)
     {
         this.pathPoint = pathPoint;
-        this.model = model;
         this.healthBar = hpView;
-        UpdateStat();
+        this.stat = stat;
+        UpdateModel();
         gameController.enemies.Add(this);
     }
 
-    private void UpdateStat()
+    private void UpdateModel()
     {
-        stat = new EnemyStat(model.MaxHp, model.Armor, model.MoveSpeed, model.Coin);
+        model = new EnemyModel(stat.HealthPoint, stat.armor, stat.moveSpeed, stat.coin);
     }
 
     private void UpdateIdle(float deltaTime)
@@ -152,7 +161,7 @@ public abstract class Enemy : MonoBehaviour
         if (!isAlive) return;
         var lossHP = AddHp(-dmg);
         healthBar.HpChanged();
-        if (stat.currentHP.Value == 0)
+        if (model.CurrentHp == 0)
         {
             Die();
         }
@@ -162,10 +171,10 @@ public abstract class Enemy : MonoBehaviour
 
     private int AddHp(int amount)
     {
-        var remain = stat.currentHP.Value + amount;
-        var newValue = Mathf.Clamp(remain, 0, stat.maxHP.Value);
-        var oldValue = stat.currentHP.Value;
-        stat.currentHP.BaseValue = newValue;
+        var remain = model.CurrentHp + amount;
+        var newValue = Mathf.Clamp(remain, 0, model.CurrentHp);
+        var oldValue = model.CurrentHp;
+        model.CurrentHp = newValue;
         return newValue - oldValue;
     }
 
@@ -185,7 +194,7 @@ public abstract class Enemy : MonoBehaviour
     private void Moving(Transform mapPoint)
     {
         Vector3 _direction = mapPoint.position - transform.position;
-        transform.Translate(stat.moveSpeed.Value * Time.deltaTime * _direction.normalized);
+        transform.Translate(model.MoveSpeed * Time.deltaTime * _direction.normalized);
     }
 
     private void UpdateSkill(float deltaTime)
@@ -205,7 +214,7 @@ public abstract class Enemy : MonoBehaviour
 
     public void AddEffect(bool isNegative, Effect effect)
     {
-        if(isNegative)
+        if (isNegative)
         {
             negativeEffect.Add(effect);
         }

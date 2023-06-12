@@ -361,6 +361,7 @@
 "Assets/CanasScript/ObjectPool.cs"
 "Assets/CanasScript/Singleton.cs"
 "Assets/CanasScript/Stat.cs"
+"Assets/Scripts/Base/AllWave.cs"
 "Assets/Scripts/Base/Bullet.cs"
 "Assets/Scripts/Base/ConstFields.cs"
 "Assets/Scripts/Base/Effect.cs"
@@ -386,6 +387,7 @@
 "Assets/Scripts/Views/Node.cs"
 "Assets/Scripts/Views/TargetBullet.cs"
 "Assets/Scripts/WaveController.cs"
+"Assets/TurnScript.cs"
 -langversion:9.0
 
 /deterministic

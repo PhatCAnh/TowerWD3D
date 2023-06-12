@@ -3,185 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum WaveState
-{
-    Ready,
-    Start,
-    Run,
-    End,
-}
-
-[System.Serializable]
-public class EnemyInTurn
-{
-    public Enemy EnemyPrefab;
-    public int quantity;
-    public int pathPoint;
-}
-
-[System.Serializable]
-public class Turn
-{
-    public List<EnemyInTurn> enemiesInTurn = new();
-    private Cooldown turnCoolDown = new Cooldown();
-    public float timeCoolDown;
-    private int index = 0;
-    public WaveState state;
-
-    public void LogicUpdate(float deltaTime)
-    {
-        switch (state)
-        {
-            case WaveState.Start:
-                Start(); break;
-            case WaveState.Run:
-                Run(deltaTime); break;
-            case WaveState.End:
-                break;
-        }
-    }
-
-    public void Start()
-    {
-        state = WaveState.Run;
-    }
-
-    public void Run(float deltaTime)
-    {
-        turnCoolDown.Update(deltaTime);
-        if (turnCoolDown.isFinished)
-        {
-            index++;
-            turnCoolDown.Restart(timeCoolDown);
-            foreach (var item in enemiesInTurn)
-            {
-                if (item.quantity < index) continue;
-                var enemy = item.EnemyPrefab;
-                Singleton<GameController>.Instance.CreateEnemy(
-                    enemy,
-                    new EnemyModel(700, 0, 1, 10),
-                    item.pathPoint
-                    );
-            }
-            if (enemiesInTurn.Max(quantity => quantity.quantity) < index)
-            {
-                state = WaveState.End;
-            }
-        }
-    }
-
-
-}
-
-[System.Serializable]
-public class Wave
-{
-    public List<Turn> listTurn = new();
-    private Cooldown waveCoolDown = new Cooldown();
-    public float timeWaveCoolDown;
-    private int index = 0;
-    public WaveState state;
-
-    public void LogicUpdate(float deltaTime)
-    {
-        switch (state)
-        {
-            case WaveState.Start:
-                Start(); break;
-            case WaveState.Run:
-                Run(deltaTime); break;
-            case WaveState.End:
-                break;
-        }
-    }
-
-    public void Start()
-    {
-        state = WaveState.Run;
-    }
-
-    public void Run(float deltaTime)
-    {
-        waveCoolDown.Update(deltaTime);
-        if (waveCoolDown.isFinished)
-        {
-            if (listTurn.Count == index)
-            {
-                state = WaveState.End;
-                return;
-            }
-            listTurn[index].state = WaveState.Start;
-            index++;
-            waveCoolDown.Restart(timeWaveCoolDown);
-            
-        }
-        foreach (var item in listTurn)
-        {
-            item.LogicUpdate(deltaTime);
-        }
-    }
-}
-
-[System.Serializable]
-public class AllWave
-{
-    public List<Wave> listWave = new();
-    private Cooldown allWaveCoolDown = new Cooldown();
-    public float timeCoolDown;
-    private int index = 0;
-    public WaveState state;
-
-    public void LogicUpdate(float deltaTime)
-    {
-        switch (state)
-        {
-            case WaveState.Start:
-                Start(); break;
-            case WaveState.Run:
-                Run(deltaTime); break;
-            case WaveState.End:
-                break;
-        }
-    }
-
-    public void Start()
-    {
-        state = WaveState.Run;
-    }
-
-    public void Run(float deltaTime)
-    {
-        allWaveCoolDown.Update(deltaTime);
-        if (allWaveCoolDown.isFinished)
-        {
-            if (listWave.Count == index)
-            {
-                state = WaveState.End;
-                return;
-            }
-            listWave[index].state = WaveState.Start;
-            index++;
-            allWaveCoolDown.Restart(timeCoolDown);
-        }
-        foreach (var item in listWave)
-        {
-            item.LogicUpdate(deltaTime);
-        }
-    }
-}
-
 [System.Serializable]
 public class MapPoint
 {
     public List<Transform> point = new();
 }
-
 public class GameController : MonoBehaviour
 {
     private void Awake()
     {
         Singleton<GameController>.Instance = this;
     }
+
+    [SerializeField] private DataEnemyStat dataEnemy;
+    [SerializeField] private DataEnemyPrefab enemyPrefab;
 
     public List<MapPoint> mapPoints = new(); //will delete
     public List<Enemy> enemies = new();
@@ -200,10 +35,14 @@ public class GameController : MonoBehaviour
     {
         wave.LogicUpdate(Time.deltaTime);
     }
-    public string SetIdForEnemy()
+    public EnemyStat LoadConfigEnemyStat(string id)
     {
-        //chua viet
-        return "";
+        return dataEnemy.listData.FirstOrDefault(item => item.id.Equals(id));
+    }
+
+    public EnemyPrefab LoadPrefabEnemy(string id)
+    {
+        return enemyPrefab.listPrefab.FirstOrDefault(item => item.id.Equals(id));
     }
 
     public void EnemyDie(Enemy enemy, bool isDestroyObject = true)
@@ -231,11 +70,12 @@ public class GameController : MonoBehaviour
     {
 
     }
+
     public void WinGame()
     {
 
     }
-
+        
     public void LoseGame()
     {
 
@@ -246,12 +86,13 @@ public class GameController : MonoBehaviour
 
     }
 
-    public Enemy CreateEnemy(Enemy pfEnemy, EnemyModel model, int pathPoint)
+    public Enemy CreateEnemy(string id, int pathPoint)
     {
-        Enemy enemy = Instantiate(pfEnemy, GetStartPoint(pathPoint).position, Quaternion.identity);
+        Enemy enemy = Instantiate(LoadPrefabEnemy(id).prefab, GetStartPoint(pathPoint).position, Quaternion.identity);
         HealthBar hb = Instantiate(PF_Healthbar);
-        enemy.Init(pathPoint, model, hb);
+        enemy.Init(pathPoint, LoadConfigEnemyStat(id), hb);
         hb.Init(enemy);
         return enemy;
     }
 }
+    

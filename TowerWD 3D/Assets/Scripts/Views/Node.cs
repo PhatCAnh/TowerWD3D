@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    protected Animator animator;
+
+    public bool isOpen;
+
+    private void Start()
     {
-        
+        animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Open()
     {
-        
+        isOpen = true;
+        animator.SetBool("isOpen", isOpen);
+    }
+
+    public void Close()
+    {
+        isOpen = false;
+        animator.SetBool("isOpen", isOpen);
     }
 }

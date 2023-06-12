@@ -7,7 +7,6 @@ public class EnemyMovement : MonoBehaviour
     private Rigidbody2D theRB;
 
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float speedRotation = 720f;
 
     private Transform target;
     private int pathIndex = 0;
