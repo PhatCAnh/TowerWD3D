@@ -13,8 +13,19 @@ public class C_Tower : MonoBehaviour
         animator = GetComponent<Animator>();
         currentLevel = 0;
     }
+
     public void Level_Up()
     {
         animator.SetTrigger("Level_Up");
+    }
+
+    public void SetTriggerAnim(string strigger)
+    {
+        animator.SetTrigger(strigger);
+    }
+
+    public void SetAnimDestroyTowerInNode()
+    {
+        GetComponentInParent<Node>().SetAnimDestroyTowerInNode();
     }
 }
