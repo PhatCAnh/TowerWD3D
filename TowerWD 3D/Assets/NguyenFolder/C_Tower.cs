@@ -7,20 +7,12 @@ using System;
 
 public class C_Tower : MonoBehaviour
 {
-    [Min(1)]
-    public int currentLevel;
+    [Range(1, 3)]
+    public int currentLevel = 1;
 
     public Transform _topBody;
     public Transform _midleBody;
     public Transform _bottomBody;
-
-    Animator animator;
-    private void Awake()
-    {
-        animator = GetComponent<Animator>();
-        currentLevel = 0;
-    }
-
     public void AppearTower(float duration)
     {
         StartCoroutine(SetAnimAppearTower(duration));
@@ -29,17 +21,38 @@ public class C_Tower : MonoBehaviour
     public void DestroyTower(float duration)
     {
         StartCoroutine(SetAnimDestroyTower(duration));
+        currentLevel = 1;
     }
 
     public void Idle()
     {
-        transform.DORotate(new Vector3(0f, 360f, 0f), 1f, RotateMode.LocalAxisAdd)
+        _topBody.DORotate(new Vector3(0f, currentLevel == 2 ? -360f : 360f, 0f), 1f, RotateMode.LocalAxisAdd)
+            .SetLoops(-1, LoopType.Restart)
+            .SetEase(Ease.Linear);
+
+        _midleBody.DORotate(new Vector3(0f, currentLevel > 1 ? - 360f : 360f, 0f), 1f, RotateMode.LocalAxisAdd)
+            .SetLoops(-1, LoopType.Restart)
+            .SetEase(Ease.Linear);
+
+        _bottomBody.DORotate(new Vector3(0f, 360f, 0f), 1f, RotateMode.LocalAxisAdd)
             .SetLoops(-1, LoopType.Restart)
             .SetEase(Ease.Linear);
     }
+
     public void Pause()
     {
-        transform.DOPause();
+        _topBody.DOPause();
+        _midleBody.DOPause();
+        _bottomBody.DOPause();
+    }
+
+    public void UpLevelOne()
+    {
+        StartCoroutine(SetAnimUpLevel(0.5f, 1));
+    }
+    public void UpLevelTwo()
+    {
+        StartCoroutine(SetAnimUpLevel(0.5f, 2));
     }
 
     private IEnumerator SetAnimAppearTower(float duration)
@@ -62,6 +75,8 @@ public class C_Tower : MonoBehaviour
         sequence.OnStart(() =>
         {
             Pause();
+            _topBody.DORotate(new Vector3(0f, _bottomBody.localEulerAngles.y, 0f), duration / 2);
+            _midleBody.DORotate(new Vector3(0f, _bottomBody.localEulerAngles.y, 0f), duration / 2);
         });
         sequence.Append(_topBody.DOLocalMove(new Vector3(0, -1, 0), duration));
         sequence.Join(_midleBody.DOLocalMove(new Vector3(0, -0.35f, 0), duration).SetDelay(duration / 2));
@@ -73,15 +88,20 @@ public class C_Tower : MonoBehaviour
         yield return sequence.AsyncWaitForCompletion();
     }
 
-    public void Level_Up()
+    private IEnumerator SetAnimUpLevel(float duration, int level)
     {
-        animator.SetTrigger("Level_Up");
+        currentLevel++;
+        Sequence sequence = DOTween.Sequence();
+        Vector3 endValue = new(0, 0.3f, 0);
+        sequence.OnStart(() => Pause());
+        sequence.Join(_topBody.DOLocalMove(endValue * level, duration));
+        sequence.Join(_midleBody.DOLocalMove(endValue, duration));
+        sequence.AppendCallback(() => Idle());
+        sequence.Play();
+        yield return sequence.AsyncWaitForCompletion();
     }
 
-    public void SetTriggerAnim(string strigger)
-    {
-        animator.SetTrigger(strigger);
-    }
+
 
     public void SetAnimDestroyTowerInNode()
     {
