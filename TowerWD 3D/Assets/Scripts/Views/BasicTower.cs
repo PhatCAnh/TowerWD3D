@@ -6,11 +6,6 @@ using UnityEngine;
 
 public class BasicTower : Tower
 {
-    protected override void LogicUpdate(float deltaTime)
-    {
-        base.LogicUpdate(deltaTime);
-        
-    }
 
     private void Awake()
     {

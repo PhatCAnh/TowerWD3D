@@ -1,12 +1,15 @@
+﻿using DG.Tweening;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour
 {
     protected Animator animator;
-    [SerializeField] protected Transform Tower;
+    [SerializeField] protected Transform tower;
     public bool isOpen;
+
+    public Transform _leftDoor;
+    [SerializeField] private Transform _rightDoor;
 
     private void Start()
     {
@@ -15,47 +18,100 @@ public class Node : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            AppearTower();
+            //AppearTower();
         }
     }
 
-    public void Open()
+    public void Selected()
     {
-        isOpen = true;
-        animator.SetBool("isOpen", isOpen);
+        StartCoroutine(SetAnimSelected(1));
     }
 
-    public void Close()
+    public void Unselected()
     {
-        isOpen = false;
-        animator.SetBool("isOpen", isOpen);
+        StartCoroutine(SetAnimUnselected(1));
     }
 
     public void AppearTower()
     {
-        animator.SetBool("isHaveTower", true);
+        StartCoroutine(SetAnimAppearTower(0.5f));
     }
 
     public void DestroyTower()
     {
-        animator.SetBool("isHaveTower", false);
+        StartCoroutine(SetAnimDestroyTower(0.5f));
     }
 
-    public void SetTriggerAnim(string strigger)
+    private Tweener CloseDoor(float duration)
     {
-        animator.SetTrigger(strigger);
+        Tweener tweenerRight = _rightDoor.DOLocalMove(new Vector3(0, 0.375f, 0), duration / 2);
+        tweenerRight.OnStart(() =>
+        {
+            Tweener tweenerLeft = _leftDoor.DOLocalMove(new Vector3(0, 0.375f, 0), duration / 2);
+        });
+        return tweenerRight;
     }
 
-    public void SetAppearTower()
+    private Tweener OpenDoor(float duration)
     {
-        Tower.GetComponentInChildren<C_Tower>().SetTriggerAnim("Appear");
+        Tweener tweenerRight = _rightDoor.DOLocalMove(new Vector3(0.5f, 0.375f, 0), duration / 2);
+        tweenerRight.OnStart(() =>
+        {
+            Tweener tweenerLeft = _leftDoor.DOLocalMove(new Vector3(-0.5f, 0.375f, 0), duration / 2);
+        });
+        return tweenerRight;
     }
 
-    public void SetAnimDestroyTower()
+    private IEnumerator SetAnimSelected(float duration)
     {
-        Tower.GetComponentInChildren<C_Tower>().SetTriggerAnim("Destroy");
+        yield return OpenDoor(duration).AsyncWaitForCompletion();
+    }
+
+    private IEnumerator SetAnimUnselected(float duration)
+    {
+        yield return CloseDoor(duration).AsyncWaitForCompletion();
+    }
+
+    private IEnumerator SetAnimAppearTower(float duration)
+    {
+        // Tạo một sequence
+        Sequence sequence = DOTween.Sequence();
+
+        // Thêm các tweener vào sequence
+        sequence.Append(OpenDoor(duration * 3 / 4));
+        sequence.Join(tower.DOLocalMove(new Vector3(0, 1, 0), duration).SetDelay(duration * 3 / 4));
+        sequence.Join(tower.DOScale(new Vector3(1, 1, 1), duration).SetDelay(duration / 4));
+        sequence.Join(CloseDoor(duration * 3 / 4).SetDelay(duration / 4));
+        sequence.AppendCallback(() =>
+        {
+            tower.GetComponentInChildren<C_Tower>().AppearTower(duration);
+        }); // Gọi một hàm callback khi sequence hoàn thành
+
+        // Bắt đầu chạy sequence
+        sequence.Play();
+        yield return sequence.AsyncWaitForCompletion();
+    }
+
+    public IEnumerator SetAnimDestroyTower(float duration)
+    {
+        Sequence sequence = DOTween.Sequence();
+
+        // Thêm các tweener vào sequence
+        sequence.OnStart(() =>
+        {
+            tower.GetComponentInChildren<C_Tower>().DestroyTower(duration);
+        });
+        sequence.Join(tower.DOScale(new Vector3(0.4f, 0.4f, 0.4f), duration * 3 / 4).SetDelay(duration));
+        sequence.Join(tower.DOLocalMove(new Vector3(0, -0.3f, 0), duration).SetDelay(duration / 2));
+        sequence.Join(OpenDoor(duration * 3 / 4));
+        sequence.Join(CloseDoor(duration * 3 / 4).SetDelay(duration * 3 / 4));
+        sequence.AppendCallback(() => Debug.Log("Sequence completed")); // Gọi một hàm callback khi sequence hoàn thành
+
+        // Bắt đầu chạy sequence
+        sequence.Play();
+        yield return sequence.AsyncWaitForCompletion();
     }
 
     public void SetAnimDestroyTowerInNode()

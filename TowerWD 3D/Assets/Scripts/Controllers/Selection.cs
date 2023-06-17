@@ -53,7 +53,7 @@ public class Selection : MonoBehaviour
         {
             if (selection != null)
             {
-                selection.Close();
+                selection.Unselected();
                 selection = null;
             }
             if(Physics.Raycast(ray, out hit, 500f, layer))
@@ -61,7 +61,7 @@ public class Selection : MonoBehaviour
                 selection = hit.transform.GetComponentInParent<Node>();
                 if (hit.transform.gameObject.layer == 29)
                 {
-                    selection.Open();
+                    selection.Selected();
                 }   
                 else
                 {

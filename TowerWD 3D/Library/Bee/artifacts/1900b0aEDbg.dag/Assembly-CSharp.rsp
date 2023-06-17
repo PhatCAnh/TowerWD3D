@@ -121,6 +121,7 @@
 -define:TEXTCORE_FONT_ENGINE_1_5_OR_NEWER
 -define:CSHARP_7_OR_LATER
 -define:CSHARP_7_3_OR_NEWER
+-r:"Assets/Plugins/Demigiant/DOTween/DOTween.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2022.2.9f1/Editor/Data/Managed/UnityEngine/UnityEditor.CoreModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2022.2.9f1/Editor/Data/Managed/UnityEngine/UnityEditor.DeviceSimulatorModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2022.2.9f1/Editor/Data/Managed/UnityEngine/UnityEditor.DiagnosticsModule.dll"
@@ -328,6 +329,12 @@
 -r:"C:/Program Files/Unity/Hub/Editor/2022.2.9f1/Editor/Data/NetStandard/ref/2.1.0/netstandard.dll"
 -r:"Library/PackageCache/com.unity.testtools.codecoverage@1.2.2/lib/ReportGenerator/ReportGeneratorMerged.dll"
 -r:"Library/PackageCache/com.unity.visualscripting@1.8.0/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll"
+-r:"Library/Bee/artifacts/1900b0aEDbg.dag/Assembly-CSharp-firstpass.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aEDbg.dag/UniTask.Addressables.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aEDbg.dag/UniTask.DOTween.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aEDbg.dag/UniTask.Linq.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aEDbg.dag/UniTask.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aEDbg.dag/UniTask.TextMeshPro.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Unity.AI.Navigation.Editor.ConversionSystem.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Unity.AI.Navigation.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Unity.AI.Navigation.ref.dll"
@@ -362,7 +369,6 @@
 "Assets/CanasScript/Singleton.cs"
 "Assets/CanasScript/Stat.cs"
 "Assets/NguyenFolder/C_Tower.cs"
-"Assets/NguyenFolder/EC_Tower.cs"
 "Assets/NguyenFolder/Level_Up_SM.cs"
 "Assets/Scripts/Base/AllWave.cs"
 "Assets/Scripts/Base/Bullet.cs"

@@ -6,7 +6,8 @@ using System.Linq;
 public enum TowerState
 {
     Idle,
-    Attack
+    Attack,
+    
 }
 
 public enum TypeTargetTower
@@ -76,6 +77,7 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual TowerState SetTowerState()
     {
+        //if(state == TowerState.WaitAnim) return state;
         if (target && CheckTypeEnemy(target.type)) return TowerState.Attack;
         return TowerState.Idle;
     }
