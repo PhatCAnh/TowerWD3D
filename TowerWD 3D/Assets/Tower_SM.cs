@@ -7,7 +7,7 @@ public class Tower_SM : StateMachineBehaviour
     // OnStateEnter is called before OnStateEnter is called on any state inside this state machine
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        int currentLevel = animator.GetComponent<C_Tower>().currentLevel;
+        int currentLevel = animator.GetComponent<AnimationModelTower>().currentLevel;
         animator.SetInteger("Level", currentLevel+1);
     }
 

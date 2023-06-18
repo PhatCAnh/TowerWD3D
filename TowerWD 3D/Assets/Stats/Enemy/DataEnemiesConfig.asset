@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DataEnemyStat
   listData:
   - id: BasicEnemy
-    HealthPoint: 50
-    armor: 2
+    HealthPoint: 100
+    armor: 0
     moveSpeed: 3
-    coin: 4
-    prefab: {fileID: 6848094362217730952, guid: 3833fea580440be458b4a2fa731d7203, type: 3}
+    coin: 0

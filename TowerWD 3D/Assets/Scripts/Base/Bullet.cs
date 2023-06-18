@@ -51,11 +51,11 @@ public abstract class Bullet : MonoBehaviour
 
     [SerializeField] protected BulletDirectionType bulletDirectionType;
 
-    public void Init(Tower _owner, BulletStat _stat, Enemy _target)
+    public void Init(Tower owner, Enemy target)
     {
-        owner = _owner;
-        target = _target;
-        stat = _stat;
+        this.owner = owner;
+        this.target = target;
+        stat = new BulletStat(owner.model.Atk, owner.model.ProjectileSpeed);
     }
 
     private void Update()

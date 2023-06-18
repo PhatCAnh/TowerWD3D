@@ -51,10 +51,8 @@ public class TargetBullet : Bullet
 
         if (bulletDirectionType == BulletDirectionType.lookAt)
         {
-            Vector3 vectorToTarget = targetPos - transform.position;
-            float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg - 90;
-            Quaternion quater = Quaternion.AngleAxis(angle, Vector3.forward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, quater, deltaTime * 20f);
+            Quaternion rotGoal = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotGoal, 1f);
         }
 
         if (Vector3.Distance(transform.position, targetPos) < 0.1f)

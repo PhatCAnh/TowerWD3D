@@ -6,9 +6,18 @@ public class TowerModel
     public TowerModel() { }
     public TowerModel(string id) => _id = id;
 
+    public TowerModel(int atk, float attackRange, float attackSpeed, float projectileSpeed, float projectileCount)
+    {
+        this.Atk = atk;
+        this.AtkRange = attackRange;
+        this.AtkSpeed = attackSpeed;
+        this.ProjectileSpeed = projectileSpeed;
+        this.ProjectileCount = projectileCount;
+    }
+
     private string _id;
-    private int _level;
-    private int _exp;
+    //private int _level;
+    //private int _exp;
     private int _atk;
     private float _atkRange;
     private float _atkSpeed;
@@ -16,7 +25,7 @@ public class TowerModel
     private float _projectileCount;
 
     public string Id => _id;
-    public int Level
+    /*public int Level
     {
         get => _level;
         set
@@ -34,7 +43,7 @@ public class TowerModel
             if (_exp == value) return;
             _exp = value;
         }
-    }
+    }*/
 
     public int Atk
     {

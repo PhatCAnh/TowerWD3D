@@ -9,7 +9,7 @@ public class Selection : MonoBehaviour
 
     private Transform highlight;
     private MeshRenderer theMR_highlight => highlight.GetComponent<MeshRenderer>();
-    private Node selection;
+    public Node selection;
 
     [SerializeField] private Material highlightMaterial;
     private Material originalColor;
@@ -27,7 +27,7 @@ public class Selection : MonoBehaviour
         if (highlight != null)
         {
             theMR_highlight.material = originalColor;
-            
+
             highlight = null;
         }
         if (!Physics.Raycast(ray, out hit, 500f, layer)) return;
@@ -38,7 +38,7 @@ public class Selection : MonoBehaviour
             {
                 originalColor = theMR_highlight.material;
                 theMR_highlight.material = highlightMaterial;
-                
+
             }
         }
         else
@@ -49,24 +49,34 @@ public class Selection : MonoBehaviour
 
     private void Clicked()
     {
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if (selection != null)
+            if (Physics.Raycast(ray, out hit, 500f, layer))
+            {
+                var node = hit.transform.GetComponentInParent<Node>();
+                if (selection != null && node != selection)
+                {
+                    selection.Unselected();
+                    selection = null;
+                }
+
+                if (selection != node && !node.isHaveTower)
+                {
+                    selection = node;
+                    if (hit.transform.gameObject.layer == 29)
+                    {
+                        selection.Selected();
+                    }
+                    else
+                    {
+                        selection = null;
+                    }
+                }
+            }
+            else if (selection != null)
             {
                 selection.Unselected();
                 selection = null;
-            }
-            if(Physics.Raycast(ray, out hit, 500f, layer))
-            {
-                selection = hit.transform.GetComponentInParent<Node>();
-                if (hit.transform.gameObject.layer == 29)
-                {
-                    selection.Selected();
-                }   
-                else
-                {
-                    selection = null;
-                }
             }
         }
     }

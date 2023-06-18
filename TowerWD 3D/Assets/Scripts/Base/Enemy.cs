@@ -24,16 +24,10 @@ public enum EnemyState
     Die
 }
 
-[CreateAssetMenu(fileName = "DataEnemiesConfig", menuName = "GameConfiguration/ListEnemyStat")]
+[CreateAssetMenu(fileName = "DataStatEnemies", menuName = "GameConfiguration/EnemyStat")]
 public class DataEnemyStat : ScriptableObject
 {
     public List<EnemyStat> listData;
-}
-
-[CreateAssetMenu(fileName = "PrefabEnemiesConfig", menuName = "GameConfiguration/ListEnemyPrefab")]
-public class DataEnemyPrefab : ScriptableObject
-{
-    public List<EnemyPrefab> listPrefab;
 }
 
 [Serializable]

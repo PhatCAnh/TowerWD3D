@@ -5,10 +5,9 @@ using System.Linq;
 
 public enum TowerState
 {
+    RunningAnim,
     Idle,
-    Attack,
-    
-}
+    Attack,}
 
 public enum TypeTargetTower
 {
@@ -19,10 +18,17 @@ public enum TypeTargetTower
     Random
 }
 
+[CreateAssetMenu(fileName = "DataStatTower", menuName = "GameConfiguration/TowerStat")]
+public class DataTowerStat : ScriptableObject
+{
+    public List<TowerStat> listData;
+}
+
 public abstract class Tower : MonoBehaviour
 {
     protected SphereCollider theCC;
-    public TowerState state { get; protected set; }
+    public TowerState state { get; set; }
+    public TowerModel model { get; protected set; }
     public TypeTargetTower typeTarget;
     public EnemyType[] typeEnemyTarget;
     //public TowerModel model { get; private set; }
@@ -32,15 +38,14 @@ public abstract class Tower : MonoBehaviour
     private bool isStop;
     [SerializeField] protected List<Enemy> listEnemy = new();
 
-
-    [SerializeField] protected Transform firePointPos;
-    [SerializeField] protected Bullet bulletPrefab;
+    public Transform firePointPos;
     public void Init(TowerStat _stat)
     {
         //model = _model;
         stat = _stat;
+        UpdateModel();
         theCC = GetComponent<SphereCollider>();
-        theCC.radius = stat.atkRange.Value;
+        theCC.radius = model.AtkRange;
     }
 
     private void Update()
@@ -53,6 +58,11 @@ public abstract class Tower : MonoBehaviour
     {
         if (isStop) return;
         LogicUpdate(Time.fixedDeltaTime);
+    }
+
+    public bool CheckTypeEnemy(EnemyType enemy)
+    {
+        return typeEnemyTarget.Contains(enemy);
     }
 
     protected virtual void LogicUpdate(float deltaTime)
@@ -77,8 +87,8 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual TowerState SetTowerState()
     {
-        //if(state == TowerState.WaitAnim) return state;
-        if (target && CheckTypeEnemy(target.type)) return TowerState.Attack;
+        if(state == TowerState.RunningAnim) return state;
+        if (target != null && CheckTypeEnemy(target.type)) return TowerState.Attack;
         return TowerState.Idle;
     }
 
@@ -86,14 +96,14 @@ public abstract class Tower : MonoBehaviour
     {
         if (attackCooldown.isFinished)
         {
-            attackCooldown.Restart(stat.atkSpeed.Value);
+            attackCooldown.Restart(model.AtkSpeed);
             Attack();
         }
     }
 
     protected virtual void UpdateIdle()
     {
-        listEnemy.RemoveAll(enemy => !enemy.isAlive);
+        
         switch (typeTarget)
         {
             case TypeTargetTower.First:
@@ -112,23 +122,12 @@ public abstract class Tower : MonoBehaviour
                 target = GetRandomEnemy();
                 break;
         }
+        listEnemy.RemoveAll(enemy => !enemy.isAlive);
     }
 
     protected virtual void Attack()
     {
-        SpawnBullet();
-    }
-
-    public Bullet SpawnBullet()
-    {
-        Bullet bullet = Instantiate(bulletPrefab, firePointPos.position, Quaternion.identity, firePointPos);
-        bullet.Init(this, new BulletStat(stat.atk.Value, stat.ProjectileSpeed.Value), target);
-        return bullet;
-    }
-
-    public bool CheckTypeEnemy(EnemyType enemy)
-    {
-        return typeEnemyTarget.Contains(enemy);
+        Singleton<GameController>.Instance.CreateBullet(this, target);
     }
 
     //protected abstract void SetTypeEnemyTarget();
@@ -174,5 +173,16 @@ public abstract class Tower : MonoBehaviour
     {
         var list = listEnemy.Where(enemy => enemy.isAlive).ToList();
         return list[Random.Range(0, list.Count())];
+    }
+
+    private void UpdateModel()
+    {
+        model = new TowerModel(
+            stat.atk,
+            stat.atkRange,
+            stat.atkSpeed,
+            stat.ProjectileSpeed,
+            stat.ProjectileCount
+            );
     }
 }

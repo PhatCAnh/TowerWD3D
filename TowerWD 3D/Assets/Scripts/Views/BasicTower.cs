@@ -6,9 +6,4 @@ using UnityEngine;
 
 public class BasicTower : Tower
 {
-
-    private void Awake()
-    {
-        Init(new TowerStat(10, 10, 1));
-    }
 }
