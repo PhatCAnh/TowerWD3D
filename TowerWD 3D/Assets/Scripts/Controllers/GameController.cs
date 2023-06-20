@@ -11,8 +11,6 @@ public class MapPoint
 }
 public class GameController : MonoBehaviour
 {
-
-
     [SerializeField] private DataEnemyStat dataEnemy;
     [SerializeField] private DataTowerStat dataTower;
 
@@ -108,9 +106,13 @@ public class GameController : MonoBehaviour
         return enemy;
     }
 
-    public Tower CreateTower(string id, Node node)
+    public Tower CreateTower(string id, Node node, Material material)
     {
         Tower tower = Instantiate(GetPrefabTower(id), node.tower.position, Quaternion.identity, node.tower);
+        var skin = tower.GetComponent<AnimationModelTower>();
+        skin._bottomBody.GetComponent<MeshRenderer>().material = material;
+        skin._midleBody.GetComponent<MeshRenderer>().material = material;
+        skin.topBody.GetComponent<MeshRenderer>().material = material;
         tower.Init(LoadConfigTowerStat(id));
         return tower;
     }

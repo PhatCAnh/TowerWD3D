@@ -2,6 +2,8 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
+using Cysharp.Threading.Tasks;
+
 public class AnimationModelTower : MonoBehaviour
 {
     [Range(1, 3)]
@@ -11,21 +13,20 @@ public class AnimationModelTower : MonoBehaviour
     public Transform _midleBody;
     public Transform _bottomBody;
 
-    public Tower tower;
+    public Tower tower => GetComponent<Tower>();
 
-    private void Start()
+    public async UniTask AppearTower()
     {
-        tower = GetComponent<Tower>();
+        await SetAnimAppearTower();
+        tower.state = TowerState.Idle;
+        Idle();
     }
 
-    public void AppearTower(float duration)
+    public async UniTask DestroyTower()
     {
-        StartCoroutine(SetAnimAppearTower(duration));
-    }
-
-    public void DestroyTower(float duration)
-    {
-        StartCoroutine(SetAnimDestroyTower(duration));
+        tower.state = TowerState.RunningAnim;
+        Pause();
+        await SetAnimDestroyTower();
         currentLevel = 1;
     }
 
@@ -51,51 +52,44 @@ public class AnimationModelTower : MonoBehaviour
         _bottomBody.DOPause();
     }
 
-    public void UpLevelOne()
+    public async UniTask UpLevel()
     {
-        StartCoroutine(SetAnimUpLevel(0.5f, 1));
-    }
-    public void UpLevelTwo()
-    {
-        StartCoroutine(SetAnimUpLevel(0.5f, 2));
+        tower.state = TowerState.RunningAnim;
+        await SetAnimUpLevel(0.5f, currentLevel);
+        tower.state = TowerState.Idle;
     }
 
-    private IEnumerator SetAnimAppearTower(float duration)
+    private async UniTask SetAnimAppearTower()
     {
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(_midleBody.DOLocalMove(Vector3.zero, duration));
-        sequence.Join(topBody.DOLocalMove(Vector3.zero, duration).SetDelay(duration / 2));
+        sequence.Append(_midleBody.DOLocalMove(Vector3.zero, 0.5f));
+        sequence.Join(topBody.DOLocalMove(Vector3.zero, 0.3f).SetDelay(0.2f));
         sequence.AppendCallback(() =>
         {
-            tower.state = TowerState.Idle;
-            Idle();
             sequence.Kill();
-        }); // Gọi một hàm callback khi sequence hoàn thành
-        sequence.Play();
-        yield return sequence.AsyncWaitForCompletion();
-    }
-
-    private IEnumerator SetAnimDestroyTower(float duration)
-    {
-        Sequence sequence = DOTween.Sequence();
-        sequence.OnStart(() =>
-        {
-            tower.state = TowerState.RunningAnim;
-            Pause();
-            topBody.DORotate(new Vector3(0f, _bottomBody.localEulerAngles.y, 0f), duration / 2);
-            _midleBody.DORotate(new Vector3(0f, _bottomBody.localEulerAngles.y, 0f), duration / 2);
         });
-        sequence.Append(topBody.DOLocalMove(new Vector3(0, -1, 0), duration));
-        sequence.Join(_midleBody.DOLocalMove(new Vector3(0, -0.35f, 0), duration).SetDelay(duration / 2));
+        await sequence.AsyncWaitForCompletion();
+    }
+
+    private async UniTask SetAnimDestroyTower()
+    {
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(_midleBody.DORotate(new Vector3(0f, _bottomBody.localEulerAngles.y, 0f), 0.1f)
+            .OnStart(() => _midleBody.DOLocalMove(new Vector3(0, 0, 0), 0.1f)));
+
+        sequence.Append(topBody.DORotate(new Vector3(0f, _bottomBody.localEulerAngles.y, 0f), 0.1f)
+            .OnStart(() => topBody.DOLocalMove(new Vector3(0, 0, 0), 0.1f)));
+
+        sequence.Join(topBody.DOLocalMove(new Vector3(0, -1, 0), 0.1f).SetDelay(0.15f));
+        sequence.Join(_midleBody.DOLocalMove(new Vector3(0, -0.35f, 0), 0.1f).SetDelay(0.15f));
         sequence.AppendCallback(() =>
         {
             sequence.Kill();
-        }); // Gọi một hàm callback khi sequence hoàn thành
-        sequence.Play();
-        yield return sequence.AsyncWaitForCompletion();
+        });
+        await sequence.AsyncWaitForCompletion();
     }
 
-    private IEnumerator SetAnimUpLevel(float duration, int level)
+    private async UniTask SetAnimUpLevel(float duration, int level)
     {
         currentLevel++;
         Sequence sequence = DOTween.Sequence();
@@ -109,6 +103,6 @@ public class AnimationModelTower : MonoBehaviour
             sequence.Kill();
         });
         sequence.Play();
-        yield return sequence.AsyncWaitForCompletion();
+        await sequence.AsyncWaitForCompletion();
     }
 }

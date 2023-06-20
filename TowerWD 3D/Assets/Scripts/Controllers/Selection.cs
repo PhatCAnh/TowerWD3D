@@ -53,29 +53,42 @@ public class Selection : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit, 500f, layer))
             {
-                var node = hit.transform.GetComponentInParent<Node>();
-                if (selection != null && node != selection)
+                switch (hit.transform.gameObject.layer)
                 {
-                    selection.Unselected();
-                    selection = null;
-                }
+                    case 29:
+                        {
+                            var node = hit.transform.GetComponentInParent<Node>();
+                            if (selection != null && node != selection)
+                            {
+                                _ = selection.Unselected();
+                                selection = null;
+                            }
 
-                if (selection != node && !node.isHaveTower)
-                {
-                    selection = node;
-                    if (hit.transform.gameObject.layer == 29)
-                    {
-                        selection.Selected();
-                    }
-                    else
-                    {
-                        selection = null;
-                    }
+                            /*if (selection != node && !node.isHaveTower)
+                            {*/
+                                selection = node;
+                                if (hit.transform.gameObject.layer == 29)
+                                {
+                                    _ = selection.Selected();
+                                }
+                                else
+                                {
+                                    selection = null;
+                                }
+                            //}
+                        }
+                        break;
+                    case 27:
+                        {
+                            var chooser = hit.transform.GetComponent<ChooseTower>();
+                            chooser.OnClicked();
+                        }
+                        break;
                 }
             }
             else if (selection != null)
             {
-                selection.Unselected();
+                _ = selection.Unselected();
                 selection = null;
             }
         }
