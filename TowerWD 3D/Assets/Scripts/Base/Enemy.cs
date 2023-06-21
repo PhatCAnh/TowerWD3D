@@ -60,12 +60,14 @@ public abstract class Enemy : MonoBehaviour
     public bool isAlive => model.CurrentHp > 0;
     public bool isFullHp => model.CurrentHp >= model.MaxHp;
     public Food isPicked { get; protected set; }
-    public GameController gameController => Singleton<GameController>.Instance;
+    public InGameController gameController => Singleton<InGameController>.Instance;
 
     public int pathPoint;
     protected int index;
 
     public bool isStop;
+
+    public Transform healthBarPos;
 
     public List<Effect> negativeEffect = new();
     public List<Effect> positiveEffect = new();
@@ -177,7 +179,7 @@ public abstract class Enemy : MonoBehaviour
         PlayeSound(EnemyState.Die);
         state = EnemyState.Die;
         isPicked?.Droped();
-        Singleton<GameController>.Instance.EnemyDie(this);
+        Singleton<InGameController>.Instance.EnemyDie(this);
     }
 
     public void Stop()

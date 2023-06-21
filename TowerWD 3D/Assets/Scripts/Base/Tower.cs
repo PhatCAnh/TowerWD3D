@@ -21,7 +21,7 @@ public enum TypeTargetTower
 [CreateAssetMenu(fileName = "DataStatTower", menuName = "GameConfiguration/TowerStat")]
 public class DataTowerStat : ScriptableObject
 {
-    public List<TowerStat> listData;
+    public List<TowerData> listData;
 }
 
 public abstract class Tower : MonoBehaviour
@@ -96,7 +96,7 @@ public abstract class Tower : MonoBehaviour
     {
         if (attackCooldown.isFinished)
         {
-            attackCooldown.Restart(model.AtkSpeed);
+            attackCooldown.Restart(1 / model.AtkSpeed);
             Attack();
         }
     }
@@ -127,7 +127,7 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual void Attack()
     {
-        Singleton<GameController>.Instance.CreateBullet(this, target);
+        Singleton<InGameController>.Instance.CreateBullet(this, target);
     }
 
     //protected abstract void SetTypeEnemyTarget();

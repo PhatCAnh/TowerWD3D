@@ -14,8 +14,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DataTowerStat
   listData:
   - id: BasicTower
-    atk: 10
-    atkRange: 10
-    atkSpeed: 1
-    ProjectileSpeed: 5
-    ProjectileCount: 1
+    statLevelTower:
+    - id: BasicTower
+      atk: 5
+      atkRange: 10
+      atkSpeed: 1
+      ProjectileSpeed: 5
+      ProjectileCount: 1
+      levelEvolution: 1
+      coinToEvolution: 0
+    - id: BasicTower
+      atk: 10
+      atkRange: 10
+      atkSpeed: 2
+      ProjectileSpeed: 7.5
+      ProjectileCount: 1
+      levelEvolution: 2
+      coinToEvolution: 100
+    - id: BasicTower
+      atk: 15
+      atkRange: 10
+      atkSpeed: 4
+      ProjectileSpeed: 10
+      ProjectileCount: 1
+      levelEvolution: 3
+      coinToEvolution: 200
+  - id: BasicTower
+    statLevelTower:
+    - id: 
+      atk: 0
+      atkRange: 0
+      atkSpeed: 0
+      ProjectileSpeed: 0
+      ProjectileCount: 0
+      levelEvolution: 0
+      coinToEvolution: 0
+    - id: 
+      atk: 0
+      atkRange: 0
+      atkSpeed: 0
+      ProjectileSpeed: 0
+      ProjectileCount: 0
+      levelEvolution: 0
+      coinToEvolution: 0
+    - id: 
+      atk: 0
+      atkRange: 0
+      atkSpeed: 0
+      ProjectileSpeed: 0
+      ProjectileCount: 0
+      levelEvolution: 0
+      coinToEvolution: 0

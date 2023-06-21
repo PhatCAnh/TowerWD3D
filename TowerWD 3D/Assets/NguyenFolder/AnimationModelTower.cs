@@ -3,11 +3,11 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using Cysharp.Threading.Tasks;
+using CanasSource;
 
 public class AnimationModelTower : MonoBehaviour
 {
-    [Range(1, 3)]
-    public int currentLevel = 1;
+    private int currentLevel => tower.stat.levelEvolution;
 
     public Transform topBody;
     public Transform _midleBody;
@@ -27,7 +27,6 @@ public class AnimationModelTower : MonoBehaviour
         tower.state = TowerState.RunningAnim;
         Pause();
         await SetAnimDestroyTower();
-        currentLevel = 1;
     }
 
     public void Idle()
@@ -54,8 +53,9 @@ public class AnimationModelTower : MonoBehaviour
 
     public async UniTask UpLevel()
     {
+        if (!Singleton<InGameController>.Instance.UpLevelTower(tower)) return;
         tower.state = TowerState.RunningAnim;
-        await SetAnimUpLevel(0.5f, currentLevel);
+        await SetAnimUpLevel(0.5f, currentLevel - 1);
         tower.state = TowerState.Idle;
     }
 
@@ -91,7 +91,6 @@ public class AnimationModelTower : MonoBehaviour
 
     private async UniTask SetAnimUpLevel(float duration, int level)
     {
-        currentLevel++;
         Sequence sequence = DOTween.Sequence();
         Vector3 endValue = new(0, 0.3f, 0);
         sequence.OnStart(() => Pause());

@@ -1,4 +1,4 @@
-using CanasSource;
+﻿using CanasSource;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,12 +8,14 @@ public class HealthBar : MonoBehaviour
     [SerializeField] Image imgHp;
 
     public Enemy view;
+    private Camera _cam;
 
     public void Init(Enemy enemy) => view = enemy;
 
-    private void Awake()
+    private void Start()
     {
-        transform.SetParent(Singleton<GameController>.Instance.Parent_HealthBar.transform);
+        _cam = Camera.main;
+        transform.SetParent(Singleton<InGameController>.Instance.Parent_HealthBar.transform);
     }
 
     public void HpChanged()
@@ -27,6 +29,7 @@ public class HealthBar : MonoBehaviour
     private void LateUpdate()
     {
         if(view == null) return;
-        transform.position = Camera.main.WorldToScreenPoint(view.transform.position);
+        transform.rotation = Quaternion.LookRotation(transform.position - _cam.transform.position);
+        transform.position = view.healthBarPos.position;
     }
 }

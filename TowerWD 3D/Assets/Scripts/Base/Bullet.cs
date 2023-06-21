@@ -34,6 +34,7 @@ public class BulletStat
 {
     public StatInt atk = new StatInt();
     public StatFloat moveSpeed = new StatFloat();
+    
 
     public BulletStat(int atk, float moveSpeed)
     {
@@ -48,6 +49,7 @@ public abstract class Bullet : MonoBehaviour
     public Enemy target { get; private set; }
     public BulletStat stat { get; private set; }
     public BulletState state { get; protected set; }
+    protected InGameController gameController => Singleton<InGameController>.Instance;
 
     [SerializeField] protected BulletDirectionType bulletDirectionType;
 

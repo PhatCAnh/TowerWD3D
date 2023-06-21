@@ -24,7 +24,17 @@ public class Node : MonoBehaviour
 
     public async UniTask Selected()
     {
-        SetCircleSelect();
+        if(animTower?.tower.stat.levelEvolution > 2)
+        {
+            foreach (var item in childCircle)
+            {
+                item.gameObject.SetActive(item.GetComponent<ChooseSellTower>());
+            }
+        }
+        else
+        {
+            SetCircleSelect();
+        }
         TurnCircle();
         await SetAnimSelected();
     }
@@ -39,7 +49,7 @@ public class Node : MonoBehaviour
     {
         await Unselected();
         isHaveTower = true;
-        Singleton<GameController>.Instance.CreateTower(idTower, this, material);
+        Singleton<InGameController>.Instance.CreateTower(idTower, this, material);
         animTower.tower.state = TowerState.RunningAnim;
         await SetAnimAppearTower();
         await animTower.AppearTower();

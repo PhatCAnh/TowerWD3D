@@ -17,4 +17,4 @@ MonoBehaviour:
     HealthPoint: 100
     armor: 0
     moveSpeed: 3
-    coin: 0
+    coin: 100

@@ -56,7 +56,7 @@ public class Turn
             foreach (var item in enemiesInTurn)
             {
                 if (item.quantity < index) continue;
-                Singleton<GameController>.Instance.CreateEnemy("BasicEnemy", item.pathPoint);
+                Singleton<InGameController>.Instance.CreateEnemy("BasicEnemy", item.pathPoint);
             }
             if (enemiesInTurn.Max(quantity => quantity.quantity) < index)
             {
