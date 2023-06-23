@@ -9,34 +9,18 @@ public class DataGameManager : MonoBehaviour
     [SerializeField] private DataEnemyStat dataEnemy;
     [SerializeField] private DataTowerStat dataTower;
 
-    private readonly Dictionary<string, Enemy> _enemyDict = new();
-    private readonly Dictionary<string, Tower> _towerDic = new();
-    private readonly Dictionary<string, Bullet> _bulletDic = new();
-
-    public HealthBar PF_Healthbar;
+    private readonly Dictionary<string, GameObject> _dictPrefab = new(); 
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
         Singleton<DataGameManager>.Instance = this;
-        LoadPrefabsEnemy();
-        LoadPrefabsTower();
-        LoadPrefabsBullet();
+        LoadPrefab();
     }
 
-    public Enemy GetPrefabEnemy(string id)
+    public GameObject GetPrefab(string id)
     {
-        return _enemyDict.GetValueOrDefault(id);
-    }
-
-    public Tower GetPrefabTower(string id)
-    {
-        return _towerDic.GetValueOrDefault(id);
-    }
-
-    public Bullet GetPrefabBullet(string nameOfTower)
-    {
-        return _bulletDic.GetValueOrDefault("Bullet_" + nameOfTower);
+        return _dictPrefab.GetValueOrDefault(id);
     }
 
     public EnemyStat LoadConfigEnemyStat(string id)
@@ -54,30 +38,12 @@ public class DataGameManager : MonoBehaviour
 
     }
 
-    private void LoadPrefabsEnemy()
+    private void LoadPrefab()
     {
-        Enemy[] prefabsEnemy = Resources.LoadAll<Enemy>("Prefabs/Enemies");
-        foreach (var prefab in prefabsEnemy)
+        GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs");
+        foreach (var item in prefabs)
         {
-            _enemyDict.Add(prefab.name, prefab);
-        }
-    }
-
-    private void LoadPrefabsTower()
-    {
-        Tower[] prefabsTower = Resources.LoadAll<Tower>($"Prefabs/Towers");
-        foreach (var prefab in prefabsTower)
-        {
-            _towerDic.Add(prefab.name, prefab);
-        }
-    }
-
-    private void LoadPrefabsBullet()
-    {
-        Bullet[] prefabsBullet = Resources.LoadAll<Bullet>("Prefabs/Bullets");
-        foreach (var prefab in prefabsBullet)
-        {
-            _bulletDic.Add(prefab.name, prefab);
+            _dictPrefab.Add(item.name, item);
         }
     }
 }

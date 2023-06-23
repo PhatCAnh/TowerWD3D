@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using CanasSource;
 
-namespace  Models
+namespace Models
 {
     public class TowerModel : Model
     {
-        public TowerModel(int atk, float attackRange, float attackSpeed, float projectileSpeed, float projectileCount)
+        public TowerModel(int atk, float attackRange, float attackSpeed, float projectileSpeed,
+            float projectileCount = 1)
         {
+            this.Id = Singleton<InGameController>.Instance.SetIdForTower();
             this.Atk = atk;
             this.AtkRange = attackRange;
             this.AtkSpeed = attackSpeed;
@@ -15,12 +18,14 @@ namespace  Models
         }
 
         private string _id;
+
         //private int _level;
         //private int _exp;
         private int _atk;
         private float _atkRange;
         private float _atkSpeed;
         private float _projectileSpeed;
+
         private float _projectileCount;
         /*public int Level
         {
@@ -62,7 +67,7 @@ namespace  Models
                 if (_atkRange == value)
                     return;
                 _atkRange = value;
-                //DataChange(nameof(AtkRange));
+                DataChange(nameof(AtkRange));
             }
         }
 
@@ -102,4 +107,3 @@ namespace  Models
         }
     }
 }
-

@@ -14,6 +14,7 @@ namespace Models
 
         public EnemyModel(EnemyType enemyType, int hp, int armor, float moveSpeed, int coin) : base()
         {
+            Id = Singleton<InGameController>.Instance.SetIdForEnemy();
             _enemyType = enemyType;
             _maxHp = hp;
             _currentHp = hp;
@@ -24,6 +25,7 @@ namespace Models
 
         public EnemyModel(int hp, int armor, float moveSpeed, int coin)
         {
+            Id = Singleton<InGameController>.Instance.SetIdForEnemy();
             _enemyType = EnemyType.Normal;
             _maxHp = hp;
             _currentHp = hp;

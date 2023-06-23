@@ -1,8 +1,10 @@
+using System;
 using CanasSource;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Models;
+using Random = UnityEngine.Random;
 
 public enum TowerState
 {
@@ -185,5 +187,10 @@ public abstract class Tower : MonoBehaviour
             stat.ProjectileSpeed,
             stat.ProjectileCount
             );
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, theCC.radius);
     }
 }

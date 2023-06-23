@@ -1,4 +1,4 @@
-﻿using CanasSource;
+﻿﻿using CanasSource;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System;
@@ -9,12 +9,15 @@ using UnityEngine;
 public class Node : MonoBehaviour
 {
     public bool isHaveTower;
+    public Transform attackRange;
     public Transform tower;
     public Transform leftDoor;
     public Transform rightDoor;
     public Transform circleSelect;
     public ChooseTower[] childCircle;
     public Stopwatch stopWatch = new();
+
+    private Tower _tower;
     public AnimationModelTower animTower => tower?.GetComponentInChildren<AnimationModelTower>();
 
     private void Start()
@@ -22,9 +25,10 @@ public class Node : MonoBehaviour
         childCircle = circleSelect.GetComponentsInChildren<ChooseTower>();
     }
 
+
     public async UniTask Selected()
     {
-        if(animTower?.tower.stat.levelEvolution > 2)
+        if(_tower?.stat.levelEvolution > 2)
         {
             foreach (var item in childCircle)
             {
@@ -35,6 +39,8 @@ public class Node : MonoBehaviour
         {
             SetCircleSelect();
         }
+
+        OpenAttackRange();
         TurnCircle();
         await SetAnimSelected();
     }
@@ -42,6 +48,7 @@ public class Node : MonoBehaviour
     public async UniTask Unselected()
     {
         StopCricle();
+        CloseAttackRange();
         await SetAnimUnselected();
     }
 
@@ -49,7 +56,7 @@ public class Node : MonoBehaviour
     {
         await Unselected();
         isHaveTower = true;
-        Singleton<InGameController>.Instance.CreateTower(idTower, this, material);
+        _tower = Singleton<InGameController>.Instance.CreateTower(idTower, this, material);
         animTower.tower.state = TowerState.RunningAnim;
         await SetAnimAppearTower();
         await animTower.AppearTower();
@@ -57,7 +64,7 @@ public class Node : MonoBehaviour
     }
 
     public async void DestroyTower()
-    {
+    {   
         await Unselected();
         await animTower.DestroyTower();
         await SetAnimDestroyTower();
@@ -185,5 +192,24 @@ public class Node : MonoBehaviour
         {
             item.transform.DOPause();
         }
+    }
+
+    private void OpenAttackRange()
+    {
+        if (!_tower) return;
+        attackRange.gameObject.SetActive(true);
+        var range = _tower.model.AtkRange;
+        attackRange.DOScale(new Vector3(range, range), 0.2f);
+    }
+    
+    private void CloseAttackRange()
+    {
+        if (!_tower) return;
+        var range = _tower.model.AtkRange;
+        attackRange.DOScale(new Vector3(0.1f, 0.1f), 0.2f)
+            .OnComplete(() =>
+        {
+            attackRange.gameObject.SetActive(false);
+        });
     }
 }

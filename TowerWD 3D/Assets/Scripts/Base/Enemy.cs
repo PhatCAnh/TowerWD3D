@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Models;
 using UnityEngine;
 using UnityEngine.Events;
@@ -80,15 +81,6 @@ public abstract class Enemy : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         theRB = GetComponent<Rigidbody>();
-        Singleton<Observer>.Instance.AddListenerDataChange(test);
-    }
-
-    private void test(EventBase eventBase)
-    {
-        if (eventBase.ModleID == model.Id)
-        {
-            Debug.Log("Enemy " + eventBase.ModleID + " was lost " + eventBase.NameOfType +  ": " +eventBase.Value);
-        }
     }
 
     private void Update()
@@ -132,11 +124,6 @@ public abstract class Enemy : MonoBehaviour
         this.pathPoint = pathPoint;
         this.healthBar = hpView;
         this.stat = stat;
-        UpdateModel();
-    }
-
-    private void UpdateModel()
-    {
         model = new EnemyModel(stat.healthPoint, stat.armor, stat.moveSpeed, stat.coin);
     }
 
@@ -166,7 +153,6 @@ public abstract class Enemy : MonoBehaviour
     {
         if (!isAlive) return;
         var lossHP = AddHp(-dmg);
-        healthBar.HpChanged();
         if (model.CurrentHp == 0)
         {
             Die();

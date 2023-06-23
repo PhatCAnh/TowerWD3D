@@ -2,6 +2,7 @@ using CanasSource;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using static UnityEngine.GraphicsBuffer;
@@ -11,6 +12,7 @@ public class MapPoint
 {
     public List<Transform> point = new();
 }
+
 public class InGameController : MonoBehaviour
 {
     private DataGameManager _dataGame => Singleton<DataGameManager>.Instance;
@@ -24,7 +26,7 @@ public class InGameController : MonoBehaviour
     public GameObject Parent_HealthBar;
     public Transform Parent_Bullet;
     public Transform Parent_Enemy;
-    
+
 
     public AllWave wave = new();
 
@@ -74,7 +76,7 @@ public class InGameController : MonoBehaviour
     {
         victim?.TakeDamage(Damage);
     }
-    
+
 
     public void EnemyDie(Enemy enemy, bool isDestroyObject = true)
     {
@@ -88,8 +90,8 @@ public class InGameController : MonoBehaviour
         if (mapPoints[pathPoint].point.Count > index && index >= 0)
         {
             return mapPoints[pathPoint].point[index];
-
         }
+
         return null;
     }
 
@@ -100,28 +102,25 @@ public class InGameController : MonoBehaviour
 
     public void StartGame()
     {
-
     }
 
     public void WinGame()
     {
-
     }
 
     public void LoseGame()
     {
-
     }
 
     public void NextWave()
     {
-
     }
 
     public Enemy CreateEnemy(string id, int pathPoint)
     {
-        var enemy = Instantiate(_dataGame.GetPrefabEnemy(id), GetStartPoint(pathPoint).position, Quaternion.identity, Parent_Enemy);
-        var hb = Instantiate(_dataGame.PF_Healthbar);
+        var enemy = Instantiate(_dataGame.GetPrefab(id), GetStartPoint(pathPoint).position, Quaternion.identity,
+            Parent_Enemy).GetComponent<Enemy>();
+        var hb = Instantiate(_dataGame.GetPrefab("HealthBar"), Parent_HealthBar.transform).GetComponent<HealthBar>();
         enemy.Init(pathPoint, _dataGame.LoadConfigEnemyStat(id), hb);
         hb.Init(enemy);
         enemies.Add(enemy);
@@ -131,7 +130,8 @@ public class InGameController : MonoBehaviour
     // ReSharper disable Unity.PerformanceAnalysis
     public Tower CreateTower(string id, Node node, Material material)
     {
-        var tower = Instantiate(_dataGame.GetPrefabTower(id), node.tower.position, Quaternion.identity, node.tower);
+        var tower = Instantiate(_dataGame.GetPrefab(id), node.tower.position, Quaternion.identity, node.tower)
+            .GetComponent<Tower>();
         var skin = tower.GetComponent<AnimationModelTower>();
         skin._bottomBody.GetComponent<MeshRenderer>().material = material;
         skin._midleBody.GetComponent<MeshRenderer>().material = material;
@@ -142,15 +142,26 @@ public class InGameController : MonoBehaviour
 
     public Bullet CreateBullet(Tower attacker, Enemy victim)
     {
-        var bullet = Instantiate(_dataGame.GetPrefabBullet(attacker.stat.id), attacker.firePointPos.position, Quaternion.identity, Parent_Bullet);
+        var bullet = Instantiate(_dataGame.GetPrefab("Bullet_" + attacker.stat.id), attacker.firePointPos.position,
+            Quaternion.identity, Parent_Bullet).GetComponent<Bullet>();
         bullet.Init(attacker, victim);
         return bullet;
     }
 
-    private int _count = 0;
+    private int _countEnemy = 0;
+
     public string SetIdForEnemy()
     {
-        _count++;
-        return "Enemy_" + _count;
+        _countEnemy++;
+        return "Enemy_" + _countEnemy;
+    }
+
+
+    private int _countTower = 0;
+
+    public string SetIdForTower()
+    {
+        _countTower++;
+        return "Tower_" + _countTower;
     }
 }
