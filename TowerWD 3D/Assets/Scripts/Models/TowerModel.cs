@@ -1,101 +1,105 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TowerModel
+namespace  Models
 {
-    public TowerModel() { }
-    public TowerModel(string id) => _id = id;
-
-    public TowerModel(int atk, float attackRange, float attackSpeed, float projectileSpeed, float projectileCount)
+    public class TowerModel : Model
     {
-        this.Atk = atk;
-        this.AtkRange = attackRange;
-        this.AtkSpeed = attackSpeed;
-        this.ProjectileSpeed = projectileSpeed;
-        this.ProjectileCount = projectileCount;
-    }
-
-    private string _id;
-    //private int _level;
-    //private int _exp;
-    private int _atk;
-    private float _atkRange;
-    private float _atkSpeed;
-    private float _projectileSpeed;
-    private float _projectileCount;
-
-    public string Id => _id;
-    /*public int Level
-    {
-        get => _level;
-        set
+        public TowerModel(int atk, float attackRange, float attackSpeed, float projectileSpeed, float projectileCount)
         {
-            if (_level == value) return;
-            _level = value;
+            this.Atk = atk;
+            this.AtkRange = attackRange;
+            this.AtkSpeed = attackSpeed;
+            this.ProjectileSpeed = projectileSpeed;
+            this.ProjectileCount = projectileCount;
         }
-    }
 
-    public int Exp
-    {
-        get => _exp;
-        set
+        private string _id;
+        //private int _level;
+        //private int _exp;
+        private int _atk;
+        private float _atkRange;
+        private float _atkSpeed;
+        private float _projectileSpeed;
+        private float _projectileCount;
+        /*public int Level
         {
-            if (_exp == value) return;
-            _exp = value;
+            get => _level;
+            set
+            {
+                if (_level == value) return;
+                _level = value;
+            }
         }
-    }*/
-
-    public int Atk
-    {
-        get => _atk;
-        set
+    
+        public int Exp
         {
-            if (_atk == value)
-                return;
-            _atk = value;
+            get => _exp;
+            set
+            {
+                if (_exp == value) return;
+                _exp = value;
+            }
+        }*/
+
+        public int Atk
+        {
+            get => _atk;
+            set
+            {
+                if (_atk == value)
+                    return;
+                _atk = value;
+                //DataChange(nameof(Atk));
+            }
         }
-    }
 
-    public float AtkRange
-    {
-        get => _atkRange;
-        set
+        public float AtkRange
         {
-            if (_atkRange == value)
-                return;
-            _atkRange = value;
+            get => _atkRange;
+            set
+            {
+                if (_atkRange == value)
+                    return;
+                _atkRange = value;
+                //DataChange(nameof(AtkRange));
+            }
         }
-    }
 
-    public float AtkSpeed
-    {
-        get => _atkSpeed;
-        set
+        public float AtkSpeed
         {
-            if (_atkSpeed == value) return;
-            _atkSpeed = value;
+            get => _atkSpeed;
+            set
+            {
+                if (_atkSpeed == value) return;
+                _atkSpeed = value;
+                //DataChange(nameof(AtkSpeed));
+            }
         }
-    }
 
-    public float ProjectileSpeed
-    {
-        get => _projectileSpeed;
-        set
+        public float ProjectileSpeed
         {
-            if (_projectileSpeed == value)
-                return;
-            _projectileSpeed = value;
+            get => _projectileSpeed;
+            set
+            {
+                if (_projectileSpeed == value)
+                    return;
+                _projectileSpeed = value;
+                //DataChange(nameof(ProjectileSpeed));
+            }
         }
-    }
 
-    public float ProjectileCount
-    {
-        get => _projectileCount;
-        set
+        public float ProjectileCount
         {
-            if (_projectileCount == value)
-                return;
-            _projectileCount = value;
+            get => _projectileCount;
+            set
+            {
+                if (_projectileCount == value)
+                    return;
+                _projectileCount = value;
+                //DataChange(nameof(ProjectileCount));
+            }
         }
     }
 }
+

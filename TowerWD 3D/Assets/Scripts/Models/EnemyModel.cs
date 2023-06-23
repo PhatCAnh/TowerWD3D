@@ -1,117 +1,117 @@
 using CanasSource;
-using UnityEngine;
 
-
-public class EnemyModel
+namespace Models
 {
-    private string _id;
-    private EnemyType _enemyType;
-    private int _level;
-    private int _maxHp;
-    private int _currentHp;
-    private int _armor;
-    private float _moveSpeed;
-    private int _coin;
-
-    public EnemyModel(string id, EnemyType enemyType, int hp, int armor, float moveSpeed, int coin)
+    public class EnemyModel : Model
     {
-        _id = id;
-        _enemyType = enemyType;
-        _level = 1;
-        _maxHp = hp;
-        _currentHp = hp;
-        _armor = armor;
-        _moveSpeed = moveSpeed;
-        _coin = coin;
-    }
+        private EnemyType _enemyType;
+        private int _level;
+        private int _maxHp;
+        private int _currentHp;
+        private int _armor;
+        private float _moveSpeed;
+        private int _coin;
 
-    public EnemyModel(EnemyType enemyType, int hp, int armor, float moveSpeed, int coin)
-    {
-        //_id = Singleton<GameController>.Instance.SetIdForEnemy();
-        _enemyType = enemyType;
-        _maxHp = hp;
-        _currentHp = hp;
-        _armor = armor;
-        _moveSpeed = moveSpeed;
-        _coin = coin;
-    }
-
-    public EnemyModel(int hp, int armor, float moveSpeed, int coin)
-    {
-        //_id = Singleton<GameController>.Instance.SetIdForEnemy();
-        _enemyType = EnemyType.Normal;
-        _maxHp = hp;
-        _currentHp = hp;
-        _armor = armor;
-        _moveSpeed = moveSpeed;
-        _coin = coin;
-    }
-
-    public string Id => _id;
-    public EnemyType EnemyType => _enemyType;
-    public int Level
-    {
-        get => _level;
-        set
+        public EnemyModel(EnemyType enemyType, int hp, int armor, float moveSpeed, int coin) : base()
         {
-            if (_level != value)
+            _enemyType = enemyType;
+            _maxHp = hp;
+            _currentHp = hp;
+            _armor = armor;
+            _moveSpeed = moveSpeed;
+            _coin = coin;
+        }
+
+        public EnemyModel(int hp, int armor, float moveSpeed, int coin)
+        {
+            _enemyType = EnemyType.Normal;
+            _maxHp = hp;
+            _currentHp = hp;
+            _armor = armor;
+            _moveSpeed = moveSpeed;
+            _coin = coin;
+        }
+
+
+        public EnemyType EnemyType
+        {
+            get => _enemyType;
+            set
             {
-                _level = value;
+                if (_enemyType != value)
+                {
+                    _enemyType = value;
+                    //DataChange(nameof(EnemyType));
+                }
             }
         }
-    }
-    public int MaxHp
-    {
-        get => _maxHp;
-        set
+
+        // public int Level
+        // {
+        //     get => _level;
+        //     set
+        //     {
+        //         if (_level != value)
+        //         {
+        //             _level = value;
+                        //DataChange(nameof(Level));
+        //         }
+        //     }
+        // }
+
+        public int MaxHp
         {
-            if (_maxHp != value)
+            get => _maxHp;
+            set
             {
+                if (_maxHp.Equals(value)) return;
                 _maxHp = value;
+                //DataChange(nameof(MaxHp));
             }
         }
-    }
-    public int CurrentHp
-    {
-        get => _currentHp;
-        set
+
+        public int CurrentHp
         {
-            if (_currentHp != value)
+            get => _currentHp;
+            set
             {
+                if (_currentHp == value) return;
                 _currentHp = value;
+                DataChange(nameof(CurrentHp));
             }
         }
-    }
-    public int Armor
-    {
-        get => _armor;
-        set
+
+        // public int Armor
+        // {
+        //     get => _armor;
+        //     set
+        //     {
+        //         // ReSharper disable once RedundantCheckBeforeAssignment
+        //         if (_armor == value) return;
+        //         _armor = value;
+        //         //DataChange(nameof(Armor));
+        //     }
+        // }
+
+        public float MoveSpeed
         {
-            if (_armor != value)
+            get => _moveSpeed;
+            set
             {
-                _armor = value;
-            }
-        }
-    }
-    public float MoveSpeed
-    {
-        get => _moveSpeed;
-        set
-        {
-            if (_moveSpeed != value)
-            {
+                if (_moveSpeed.Equals(value)) return;
                 _moveSpeed = value;
+                //DataChange(nameof(MoveSpeed));
             }
         }
-    }
-    public int Coin
-    {
-        get => _coin;
-        set
+
+        public int Coin
         {
-            if (_coin != value)
+            get => _coin;
+            set
             {
+                if (_coin.Equals(value)) return;
                 _coin = value;
+                //DataChange(nameof(Coin));
             }
         }
     }

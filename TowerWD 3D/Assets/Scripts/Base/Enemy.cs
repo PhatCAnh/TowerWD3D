@@ -3,8 +3,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Models;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public enum EnemyType
@@ -41,7 +43,7 @@ public class EnemyPrefab
 public class EnemyStat
 {
     public string id;
-    public int HealthPoint;
+    public int healthPoint;
     public int armor;
     public float moveSpeed;
     public int coin;
@@ -78,6 +80,15 @@ public abstract class Enemy : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         theRB = GetComponent<Rigidbody>();
+        Singleton<Observer>.Instance.AddListenerDataChange(test);
+    }
+
+    private void test(EventBase eventBase)
+    {
+        if (eventBase.ModleID == model.Id)
+        {
+            Debug.Log("Enemy " + eventBase.ModleID + " was lost " + eventBase.NameOfType +  ": " +eventBase.Value);
+        }
     }
 
     private void Update()
@@ -122,12 +133,11 @@ public abstract class Enemy : MonoBehaviour
         this.healthBar = hpView;
         this.stat = stat;
         UpdateModel();
-        gameController.enemies.Add(this);
     }
 
     private void UpdateModel()
     {
-        model = new EnemyModel(stat.HealthPoint, stat.armor, stat.moveSpeed, stat.coin);
+        model = new EnemyModel(stat.healthPoint, stat.armor, stat.moveSpeed, stat.coin);
     }
 
     private void UpdateIdle(float deltaTime)
@@ -161,7 +171,6 @@ public abstract class Enemy : MonoBehaviour
         {
             Die();
         }
-
         SpawnEffectTakeDamage();
     }
 

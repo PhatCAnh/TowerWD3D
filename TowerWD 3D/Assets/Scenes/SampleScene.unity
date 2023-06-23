@@ -1657,6 +1657,7 @@ GameObject:
   - component: {fileID: 2061236082}
   - component: {fileID: 2061236083}
   - component: {fileID: 2061236084}
+  - component: {fileID: 2061236085}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -1754,6 +1755,18 @@ MonoBehaviour:
   changeCoinEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2061236085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061236080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 422127f4101ae584992cdc5b22942e2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &543450652067767189 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1531676182984899537, guid: 854dbc4a2c93ee142b76ee3922592c8e, type: 3}

@@ -120,16 +120,18 @@ public class InGameController : MonoBehaviour
 
     public Enemy CreateEnemy(string id, int pathPoint)
     {
-        Enemy enemy = Instantiate(_dataGame.GetPrefabEnemy(id), GetStartPoint(pathPoint).position, Quaternion.identity, Parent_Enemy);
-        HealthBar hb = Instantiate(_dataGame.PF_Healthbar);
+        var enemy = Instantiate(_dataGame.GetPrefabEnemy(id), GetStartPoint(pathPoint).position, Quaternion.identity, Parent_Enemy);
+        var hb = Instantiate(_dataGame.PF_Healthbar);
         enemy.Init(pathPoint, _dataGame.LoadConfigEnemyStat(id), hb);
         hb.Init(enemy);
+        enemies.Add(enemy);
         return enemy;
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     public Tower CreateTower(string id, Node node, Material material)
     {
-        Tower tower = Instantiate(_dataGame.GetPrefabTower(id), node.tower.position, Quaternion.identity, node.tower);
+        var tower = Instantiate(_dataGame.GetPrefabTower(id), node.tower.position, Quaternion.identity, node.tower);
         var skin = tower.GetComponent<AnimationModelTower>();
         skin._bottomBody.GetComponent<MeshRenderer>().material = material;
         skin._midleBody.GetComponent<MeshRenderer>().material = material;
@@ -140,10 +142,15 @@ public class InGameController : MonoBehaviour
 
     public Bullet CreateBullet(Tower attacker, Enemy victim)
     {
-        Bullet bullet = Instantiate(_dataGame.GetPrefabBullet(attacker.stat.id), attacker.firePointPos.position, Quaternion.identity, Parent_Bullet);
+        var bullet = Instantiate(_dataGame.GetPrefabBullet(attacker.stat.id), attacker.firePointPos.position, Quaternion.identity, Parent_Bullet);
         bullet.Init(attacker, victim);
         return bullet;
     }
 
-    
+    private int _count = 0;
+    public string SetIdForEnemy()
+    {
+        _count++;
+        return "Enemy_" + _count;
+    }
 }

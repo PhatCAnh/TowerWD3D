@@ -17,6 +17,7 @@ public class DataGameManager : MonoBehaviour
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         Singleton<DataGameManager>.Instance = this;
         LoadPrefabsEnemy();
         LoadPrefabsTower();
@@ -45,10 +46,12 @@ public class DataGameManager : MonoBehaviour
 
     public TowerStat LoadConfigTowerStat(string id, int level = 1)
     {
-        var stat = dataTower.listData.FirstOrDefault(t => t.id.Equals(id)).statLevelTower[level - 1];
+        var stat = dataTower.listData.FirstOrDefault(t => t.id.Equals(id))?.statLevelTower[level - 1];
+        if (stat == null) return null;
         stat.id = id;
         stat.levelEvolution = level;
         return stat;
+
     }
 
     private void LoadPrefabsEnemy()
@@ -62,7 +65,7 @@ public class DataGameManager : MonoBehaviour
 
     private void LoadPrefabsTower()
     {
-        Tower[] prefabsTower = Resources.LoadAll<Tower>("Prefabs/Towers");
+        Tower[] prefabsTower = Resources.LoadAll<Tower>($"Prefabs/Towers");
         foreach (var prefab in prefabsTower)
         {
             _towerDic.Add(prefab.name, prefab);

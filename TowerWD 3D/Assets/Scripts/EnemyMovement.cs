@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Properties;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
 public class EnemyMovement : MonoBehaviour
 {
@@ -27,7 +30,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void LogicMove()
     {
-        if(!picked)
+        if (!picked)
         {
             if (Vector2.Distance(target.position, transform.position) <= 0.1f)
             {
