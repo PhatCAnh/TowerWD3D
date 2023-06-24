@@ -34,7 +34,6 @@ public abstract class Tower : MonoBehaviour
     public TowerModel model { get; protected set; }
     public TypeTargetTower typeTarget;
     public EnemyType[] typeEnemyTarget;
-    //public TowerModel model { get; private set; }
     public TowerStat stat { get; private set; }
     public Enemy target { get; protected set; }
     public Cooldown attackCooldown { get; protected set; } = new();
@@ -106,7 +105,7 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual void UpdateIdle()
     {
-        
+        listEnemy.RemoveAll(enemy => !enemy.isAlive || enemy == null);
         switch (typeTarget)
         {
             case TypeTargetTower.First:
@@ -125,7 +124,7 @@ public abstract class Tower : MonoBehaviour
                 target = GetRandomEnemy();
                 break;
         }
-        listEnemy.RemoveAll(enemy => !enemy.isAlive);
+        
     }
 
     protected virtual void Attack()

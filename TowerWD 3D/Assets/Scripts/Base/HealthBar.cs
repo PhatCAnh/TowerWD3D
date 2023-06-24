@@ -37,6 +37,11 @@ public class HealthBar : MonoBehaviour
         }
     }
 
+    public void Destroy()
+    {
+        Destroy(gameObject);
+    }
+
     private void LateUpdate()
     {
         if(enemy == null) return;

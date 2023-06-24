@@ -7,19 +7,29 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
+    protected Collider theColl;
+    protected Rigidbody theRB;
+    
     public FoodState state;
     private InGameController inGameController => Singleton<InGameController>.Instance;
 
     private void Start()
     {
+        theColl = GetComponent<Collider>();
+        theRB = GetComponent<Rigidbody>();
         inGameController.foods.Add(this);
-        transform.SetParent(inGameController.Parent_Food);
+        inGameController.Parent_Food.foodsInBox.Add(this);
+        transform.SetParent(inGameController.Parent_Food.transform);
     }
 
-    public void Picked(Transform parent)
+    public void Picked(Enemy enemyTake)
     {
+        if (state == FoodState.InBox) return;
+        theRB.useGravity = false;
+        theRB.constraints = RigidbodyConstraints.FreezePosition;
         state = FoodState.Picked;
-        transform.SetParent(parent);
+        transform.SetParent(enemyTake.transform);
+        transform.position = enemyTake.pickedPos.position;
     }
 
     public void Droped()

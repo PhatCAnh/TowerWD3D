@@ -85,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &7052125445971615602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sldHp: {fileID: 3393918415233236670}
   imgHp: {fileID: 6946594978880982588}
-  view: {fileID: 0}
+  enemy: {fileID: 0}
 --- !u!1 &2997160190506794742
 GameObject:
   m_ObjectHideFlags: 0

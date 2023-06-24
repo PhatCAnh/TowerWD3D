@@ -4,6 +4,7 @@ namespace State
 {
     public enum FoodState
     {
+        InBox,
         Normal,
         Picked,
         Lost

@@ -30,7 +30,7 @@ public class InGameController : MonoBehaviour
     public GameObject Parent_HealthBar;
     public Transform Parent_Bullet;
     public Transform Parent_Enemy;
-    public Transform Parent_Food;
+    public BoxFood Parent_Food;
 
 
     public AllWave wave = new();
@@ -77,9 +77,12 @@ public class InGameController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(Enemy victim, int Damage)
+    public void TakeDamage(Enemy victim, int damage)
     {
-        victim?.TakeDamage(Damage);
+        if (victim != null && victim.isAlive)
+        {
+            victim.TakeDamage(damage);
+        }
     }
 
 
@@ -172,7 +175,7 @@ public class InGameController : MonoBehaviour
 
     public void CheckLoseGame()
     {
-        if (foods.Any(food => food.state != FoodState.Lost)) return;
+        if (foods.Count != 0) return;
         LoseGame();
     }
 
@@ -182,5 +185,14 @@ public class InGameController : MonoBehaviour
         {
             WinGame();
         }
+    }
+
+    public void EnemyCompleteTakeFood(Enemy enemy)
+    {
+        enemies.Remove(enemy);
+        foods.Remove(enemy.isPicked);
+        enemy.isPicked.Lost();
+        enemy.healthBar.Destroy();
+        Destroy(enemy.gameObject);
     }
 }

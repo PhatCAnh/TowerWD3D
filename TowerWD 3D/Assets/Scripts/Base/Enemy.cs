@@ -54,7 +54,7 @@ public abstract class Enemy : MonoBehaviour
     public bool isAlive => model.CurrentHp > 0;
     public bool isFullHp => model.CurrentHp >= model.MaxHp;
     public Food isPicked { get; protected set; }
-    public InGameController gameController => Singleton<InGameController>.Instance;
+    public InGameController inGameController => Singleton<InGameController>.Instance;
 
     public int pathPoint;
     protected int index;
@@ -62,6 +62,7 @@ public abstract class Enemy : MonoBehaviour
     public bool isStop;
 
     public Transform healthBarPos;
+    public Transform pickedPos;
 
     public List<Effect> negativeEffect = new();
     public List<Effect> positiveEffect = new();
@@ -120,7 +121,7 @@ public abstract class Enemy : MonoBehaviour
 
     private void UpdateIdle(float deltaTime)
     {
-        target = gameController.GetMapPoint(pathPoint, index);
+        target = inGameController.GetMapPoint(pathPoint, index);
         if (!target) return;
         state = EnemyState.Move;
     }
@@ -135,7 +136,7 @@ public abstract class Enemy : MonoBehaviour
                 if (food.state == FoodState.Normal)
                 {
                     isPicked = food;
-                    isPicked.Picked(transform);
+                    isPicked.Picked(this);
                 }
                 else
                 {
@@ -147,7 +148,9 @@ public abstract class Enemy : MonoBehaviour
 
             if (isPicked && index == 0)
             {
-                isPicked.Lost();
+                
+                inGameController.EnemyCompleteTakeFood(this);
+                return;
             }
 
             _ = !isPicked ? index++ : index--;
@@ -180,7 +183,10 @@ public abstract class Enemy : MonoBehaviour
     {
         PlayeSound(EnemyState.Die);
         state = EnemyState.Die;
-        isPicked?.Droped();
+        if (isPicked != null)
+        {
+            isPicked?.Droped();
+        }
         Singleton<InGameController>.Instance.EnemyDie(this);
     }
 
@@ -240,11 +246,15 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    protected virtual void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerStay(Collider other)
     {
+        if (isPicked) return;
         if (other.TryGetComponent(out Food food) && food.state == FoodState.Normal)
         {
             target = food.transform;
+        } else if (other.TryGetComponent(out BoxFood boxFood))
+        {
+            isPicked = boxFood.TakeFood(this);
         }
     }
 }
