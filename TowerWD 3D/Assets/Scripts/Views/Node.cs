@@ -28,7 +28,7 @@ public class Node : MonoBehaviour
 
     public async UniTask Selected()
     {
-        if(_tower?.stat.levelEvolution > 2)
+        if(_tower?.stat.levelEvolution > 2 && isHaveTower)
         {
             foreach (var item in childCircle)
             {
@@ -64,11 +64,12 @@ public class Node : MonoBehaviour
     }
 
     public async void DestroyTower()
-    {   
+    {
+        isHaveTower = false;
         await Unselected();
         await animTower.DestroyTower();
         await SetAnimDestroyTower();
-        isHaveTower = false;
+        _tower = null;
         Destroy(animTower.gameObject);
 
     }
