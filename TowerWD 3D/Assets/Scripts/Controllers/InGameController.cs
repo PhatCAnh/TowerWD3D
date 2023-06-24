@@ -2,6 +2,7 @@ using CanasSource;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
+using State;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,14 +19,18 @@ public class InGameController : MonoBehaviour
     private DataGameManager _dataGame => Singleton<DataGameManager>.Instance;
 
     private int _totalCoin;
+    private int _countEnemy = 0;
+    private int _countTower = 0;
 
 
     public List<MapPoint> mapPoints = new(); //will delete
     public List<Enemy> enemies = new();
+    public List<Food> foods = new();
 
     public GameObject Parent_HealthBar;
     public Transform Parent_Bullet;
     public Transform Parent_Enemy;
+    public Transform Parent_Food;
 
 
     public AllWave wave = new();
@@ -82,6 +87,7 @@ public class InGameController : MonoBehaviour
     {
         enemies.Remove(enemy);
         Coin = enemy.model.Coin;
+        CheckWinGame();
         if (isDestroyObject) Destroy(enemy.gameObject);
     }
 
@@ -106,10 +112,12 @@ public class InGameController : MonoBehaviour
 
     public void WinGame()
     {
+        Debug.Log("WinGame");
     }
 
     public void LoseGame()
     {
+        Debug.Log("LoseGame");
     }
 
     public void NextWave()
@@ -148,7 +156,6 @@ public class InGameController : MonoBehaviour
         return bullet;
     }
 
-    private int _countEnemy = 0;
 
     public string SetIdForEnemy()
     {
@@ -157,11 +164,23 @@ public class InGameController : MonoBehaviour
     }
 
 
-    private int _countTower = 0;
-
     public string SetIdForTower()
     {
         _countTower++;
         return "Tower_" + _countTower;
+    }
+
+    public void CheckLoseGame()
+    {
+        if (foods.Any(food => food.state != FoodState.Lost)) return;
+        LoseGame();
+    }
+
+    public void CheckWinGame()
+    {
+        if (enemies.Count == 0 && wave.state == WaveState.End)
+        {
+            WinGame();
+        }
     }
 }

@@ -46,6 +46,12 @@ MonoBehaviour:
   - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-changeCoinEvent.m_PersistentCalls.m_Calls__UnityEngine.UIElements.ListView
   - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-mapPoints__unity-list-mapPoints.Array.data[2].point__UnityEngine.UIElements.ListView
   - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-wave.listWave__unity-list-wave.listWave.Array.data[1].listTurn__UnityEngine.UIElements.ListView
+  - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-foods__UnityEngine.UIElements.ListView
+  - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-wave.listWave__unity-list-wave.listWave.Array.data[0].listTurn__unity-list-wave.listWave.Array.data[0].listTurn.Array.data[0].listTurn__UnityEngine.UIElements.ListView
+  - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-wave.listWave__unity-list-wave.listWave.Array.data[0].listTurn__unity-list-wave.listWave.Array.data[0].listTurn.Array.data[1].listTurn__UnityEngine.UIElements.ListView
+  - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-wave.listWave__unity-list-wave.listWave.Array.data[0].listWave__UnityEngine.UIElements.ListView
+  - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-wave.listWave__unity-list-wave.listWave.Array.data[0].listTurn__unity-list-wave.listWave.Array.data[0].listTurn.Array.data[0].listEnemy__UnityEngine.UIElements.ListView
+  - __PanelContainer__rootVisualContainer__inspector-window-main-scroll-view__unity-list-wave.listWave__unity-list-wave.listWave.Array.data[1].listTurn__unity-list-wave.listWave.Array.data[1].listTurn.Array.data[0].listEnemy__UnityEngine.UIElements.ListView
   m_Values:
   - '{}'
   - '{}'
@@ -73,7 +79,13 @@ MonoBehaviour:
   - '{}'
   - '{}'
   - '{}'
-  - '{"m_ShowAlternatingRowBackgrounds":0,"serializedVirtualizationData":{"scrollOffset":{"x":0.0,"y":0.0},"firstVisibleIndex":0,"contentPadding":0.0,"contentHeight":0.0,"anchoredItemIndex":0,"anchorOffset":0.0}}'
+  - '{"m_ShowAlternatingRowBackgrounds":0,"serializedVirtualizationData":{"scrollOffset":{"x":0.0,"y":0.0},"firstVisibleIndex":0,"contentPadding":0.0,"contentHeight":132.0,"anchoredItemIndex":0,"anchorOffset":0.0}}'
+  - '{}'
+  - '{}'
+  - '{}'
+  - '{}'
+  - '{}'
+  - '{}'
   - '{}'
   - '{}'
   - '{}'

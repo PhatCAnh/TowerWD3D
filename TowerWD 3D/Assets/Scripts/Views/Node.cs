@@ -54,8 +54,8 @@ public class Node : MonoBehaviour
 
     public async void AppearTower(string idTower, Material material)
     {
-        await Unselected();
         isHaveTower = true;
+        await Unselected();
         _tower = Singleton<InGameController>.Instance.CreateTower(idTower, this, material);
         animTower.tower.state = TowerState.RunningAnim;
         await SetAnimAppearTower();
@@ -200,14 +200,14 @@ public class Node : MonoBehaviour
         if (!_tower) return;
         attackRange.gameObject.SetActive(true);
         var range = _tower.model.AtkRange;
-        attackRange.DOScale(new Vector3(range, range), 0.2f);
+        attackRange.DOScale(new Vector3(range, range, range), 0.2f);
     }
     
     private void CloseAttackRange()
     {
         if (!_tower) return;
         var range = _tower.model.AtkRange;
-        attackRange.DOScale(new Vector3(0.1f, 0.1f), 0.2f)
+        attackRange.DOScale(new Vector3(0.1f, 0.1f, 0.1f), 0.2f)
             .OnComplete(() =>
         {
             attackRange.gameObject.SetActive(false);

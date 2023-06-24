@@ -399,6 +399,7 @@
 "Assets/Scripts/Base/Food.cs"
 "Assets/Scripts/Base/HealthBar.cs"
 "Assets/Scripts/Base/Model.cs"
+"Assets/Scripts/Base/State.cs"
 "Assets/Scripts/Base/Tower.cs"
 "Assets/Scripts/Base/TowerStat.cs"
 "Assets/Scripts/Controllers/DataGameManager.cs"

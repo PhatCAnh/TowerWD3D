@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using State;
 using Cysharp.Threading.Tasks;
 using Models;
 using UnityEngine;
@@ -17,16 +18,6 @@ public enum EnemyType
     Fly,
     Boss
 }
-
-
-public enum EnemyState
-{
-    Idle,
-    Move,
-    Skill,
-    Die
-}
-
 [CreateAssetMenu(fileName = "DataStatEnemies", menuName = "GameConfiguration/EnemyStat")]
 public class DataEnemyStat : ScriptableObject
 {
@@ -48,8 +39,8 @@ public class EnemyStat
     public int armor;
     public float moveSpeed;
     public int coin;
-
 }
+
 public abstract class Enemy : MonoBehaviour
 {
     protected Animator anim;
@@ -115,8 +106,8 @@ public abstract class Enemy : MonoBehaviour
 
     protected virtual void PhysicUpdate(float deltaTime)
     {
-
     }
+
     #endregion
 
     public void Init(int pathPoint, EnemyStat stat, HealthBar hpView)
@@ -141,9 +132,24 @@ public abstract class Enemy : MonoBehaviour
         {
             if (target.TryGetComponent(out Food food))
             {
-                isPicked = food;
-                isPicked.Picked(transform);
+                if (food.state == FoodState.Normal)
+                {
+                    isPicked = food;
+                    isPicked.Picked(transform);
+                }
+                else
+                {
+                    target = null;
+                    state = EnemyState.Idle;
+                    return;
+                }
             }
+
+            if (isPicked && index == 0)
+            {
+                isPicked.Lost();
+            }
+
             _ = !isPicked ? index++ : index--;
             state = EnemyState.Idle;
         }
@@ -157,6 +163,7 @@ public abstract class Enemy : MonoBehaviour
         {
             Die();
         }
+
         SpawnEffectTakeDamage();
     }
 
@@ -190,17 +197,14 @@ public abstract class Enemy : MonoBehaviour
 
     private void UpdateSkill(float deltaTime)
     {
-
     }
 
     protected void SpawnEffectTakeDamage()
     {
-
     }
 
     protected void PlayeSound(EnemyState enemyState)
     {
-
     }
 
     public void AddEffect(bool isNegative, Effect effect)
@@ -238,9 +242,8 @@ public abstract class Enemy : MonoBehaviour
 
     protected virtual void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Food food) && !food.isPicked)
+        if (other.TryGetComponent(out Food food) && food.state == FoodState.Normal)
         {
-            food.isPicked = true;
             target = food.transform;
         }
     }

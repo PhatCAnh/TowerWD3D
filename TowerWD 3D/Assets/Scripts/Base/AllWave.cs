@@ -2,6 +2,7 @@ using CanasSource;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum WaveState
 {
@@ -22,10 +23,11 @@ public class EnemyInTurn
 [System.Serializable]
 public class Turn
 {
-    public List<EnemyInTurn> enemiesInTurn = new();
-    private Cooldown turnCoolDown = new Cooldown();
-    public float timeCoolDown;
+    private Cooldown enemyCoolDown = new Cooldown();
     private int index = 0;
+
+    public List<EnemyInTurn> listEnemy = new();
+    public float timeCdEnemy;
     public WaveState state;
 
     public void LogicUpdate(float deltaTime)
@@ -33,9 +35,11 @@ public class Turn
         switch (state)
         {
             case WaveState.Start:
-                Start(); break;
+                Start();
+                break;
             case WaveState.Run:
-                Run(deltaTime); break;
+                Run(deltaTime);
+                break;
             case WaveState.End:
                 break;
         }
@@ -48,43 +52,47 @@ public class Turn
 
     public void Run(float deltaTime)
     {
-        turnCoolDown.Update(deltaTime);
-        if (turnCoolDown.isFinished)
+        enemyCoolDown.Update(deltaTime);
+        if (enemyCoolDown.isFinished)
         {
             index++;
-            turnCoolDown.Restart(timeCoolDown);
-            foreach (var item in enemiesInTurn)
+            enemyCoolDown.Restart(timeCdEnemy);
+            foreach (var item in listEnemy)
             {
                 if (item.quantity < index) continue;
-                Singleton<InGameController>.Instance.CreateEnemy("BasicEnemy", item.pathPoint);
+                Singleton<InGameController>.Instance.CreateEnemy(item.idEnemy, item.pathPoint);
             }
-            if (enemiesInTurn.Max(quantity => quantity.quantity) < index)
+
+            if (listEnemy.Max(quantity => quantity.quantity) < index)
             {
                 state = WaveState.End;
             }
         }
     }
-
-
 }
 
 [System.Serializable]
 public class Wave
 {
-    public List<Turn> listTurn = new();
-    private Cooldown waveCoolDown = new Cooldown();
-    public float timeWaveCoolDown;
+    private Cooldown turnCooldown = new Cooldown();
     private int index = 0;
+    private Turn thisTurn;
+
+    public List<Turn> listTurn = new();
+    public float timeCdTurn;
     public WaveState state;
+
 
     public void LogicUpdate(float deltaTime)
     {
         switch (state)
         {
             case WaveState.Start:
-                Start(); break;
+                Start();
+                break;
             case WaveState.Run:
-                Run(deltaTime); break;
+                Run(deltaTime);
+                break;
             case WaveState.End:
                 break;
         }
@@ -93,26 +101,29 @@ public class Wave
     public void Start()
     {
         state = WaveState.Run;
+        thisTurn = listTurn[index];
     }
 
     public void Run(float deltaTime)
     {
-        waveCoolDown.Update(deltaTime);
-        if (waveCoolDown.isFinished)
+        thisTurn.LogicUpdate(deltaTime);
+        switch (thisTurn.state)
         {
-            if (listTurn.Count == index)
-            {
-                state = WaveState.End;
-                return;
-            }
-            listTurn[index].state = WaveState.Start;
-            index++;
-            waveCoolDown.Restart(timeWaveCoolDown);
+            case WaveState.End:
+                turnCooldown.Restart(timeCdTurn);
+                index++;
+                if (listTurn.Count == index)
+                {
+                    state = WaveState.End;
+                    return;
+                }
 
-        }
-        foreach (var item in listTurn)
-        {
-            item.LogicUpdate(deltaTime);
+                thisTurn = listTurn[index];
+                break;
+            case WaveState.Ready:
+                turnCooldown.Update(deltaTime);
+                if (turnCooldown.isFinished) thisTurn.state = WaveState.Start;
+                break;
         }
     }
 }
@@ -120,20 +131,25 @@ public class Wave
 [System.Serializable]
 public class AllWave
 {
-    public List<Wave> listWave = new();
-    private Cooldown allWaveCoolDown = new Cooldown();
-    public float timeCoolDown;
+    private Cooldown waveCoolDown = new Cooldown();
     private int index = 0;
+    private Wave thisWave;
+
+    public List<Wave> listWave = new();
+    public float timeCdWave;
     public WaveState state;
+
 
     public void LogicUpdate(float deltaTime)
     {
         switch (state)
         {
             case WaveState.Start:
-                Start(); break;
+                Start();
+                break;
             case WaveState.Run:
-                Run(deltaTime); break;
+                Run(deltaTime);
+                break;
             case WaveState.End:
                 break;
         }
@@ -142,25 +158,29 @@ public class AllWave
     public void Start()
     {
         state = WaveState.Run;
+        thisWave = listWave[index];
     }
 
     public void Run(float deltaTime)
     {
-        allWaveCoolDown.Update(deltaTime);
-        if (allWaveCoolDown.isFinished)
+        thisWave.LogicUpdate(deltaTime);
+        switch (thisWave.state)
         {
-            if (listWave.Count == index)
-            {
-                state = WaveState.End;
-                return;
-            }
-            listWave[index].state = WaveState.Start;
-            index++;
-            allWaveCoolDown.Restart(timeCoolDown);
-        }
-        foreach (var item in listWave)
-        {
-            item.LogicUpdate(deltaTime);
+            case WaveState.End:
+                waveCoolDown.Restart(timeCdWave);
+                index++;
+                if (listWave.Count == index)
+                {
+                    state = WaveState.End;
+                    return;
+                }
+
+                thisWave = listWave[index];
+                break;
+            case WaveState.Ready:
+                waveCoolDown.Update(deltaTime);
+                if (waveCoolDown.isFinished) thisWave.state = WaveState.Start;
+                break;
         }
     }
 }
