@@ -84,6 +84,6 @@ public class TargetBullet : Bullet
 
     private void ExploseNormal()
     {
-        gameController.TakeDamage(target, stat.atk.Value);
+        inGameController.TakeDamage(target, stat.atk.Value);
     }
 }

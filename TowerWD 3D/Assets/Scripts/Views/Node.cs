@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
+    protected InGameController inGameController => Singleton<InGameController>.Instance;
+
     public bool isHaveTower;
     public Transform attackRange;
     public Transform tower;
@@ -70,8 +72,7 @@ public class Node : MonoBehaviour
         await animTower.DestroyTower();
         await SetAnimDestroyTower();
         _tower = null;
-        Destroy(animTower.gameObject);
-
+        inGameController.DestroyTower(_tower);
     }
 
     public async void LevelUp()

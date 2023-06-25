@@ -30,6 +30,8 @@ public class DataTowerStat : ScriptableObject
 public abstract class Tower : MonoBehaviour
 {
     protected SphereCollider theCC;
+
+    protected InGameController inGameController => Singleton<InGameController>.Instance;
     public TowerState state { get; set; }
     public TowerModel model { get; protected set; }
     public TypeTargetTower typeTarget;
@@ -37,10 +39,12 @@ public abstract class Tower : MonoBehaviour
     public TowerStat stat { get; private set; }
     public Enemy target { get; protected set; }
     public Cooldown attackCooldown { get; protected set; } = new();
-    private bool isStop;
+    
     [SerializeField] protected List<Enemy> listEnemy = new();
 
     public Transform firePointPos;
+    
+    public bool isStop;
     public void Init(TowerStat _stat)
     {
         //model = _model;
@@ -53,7 +57,7 @@ public abstract class Tower : MonoBehaviour
     private void Update()
     {
         if (isStop) return;
-        LogicUpdate(Time.deltaTime);
+        LogicUpdate(inGameController.gameSpeed);
     }
 
     private void FixedUpdate()

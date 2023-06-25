@@ -8,12 +8,17 @@ using CanasSource;
 public class AnimationModelTower : MonoBehaviour
 {
     private int currentLevel => tower.stat.levelEvolution;
-
+    protected InGameController inGameController => Singleton<InGameController>.Instance;
     public Transform topBody;
     public Transform _midleBody;
     public Transform _bottomBody;
-
+    private bool isStop;
     public Tower tower => GetComponent<Tower>();
+
+    private void Start()
+    {
+        Singleton<Observer>.Instance.AddListener("StopGame", param => StopAnim((bool)param));
+    }
 
     public async UniTask AppearTower()
     {
@@ -31,11 +36,13 @@ public class AnimationModelTower : MonoBehaviour
 
     public void Idle()
     {
-        topBody.DORotate(new Vector3(0f, currentLevel == 2 ? -360f : 360f, 0f), 1f, RotateMode.LocalAxisAdd)
+        topBody.DORotate(new Vector3(0f, currentLevel == 2 ? -360f : 360f, 0f), 1f,
+                RotateMode.LocalAxisAdd)
             .SetLoops(-1, LoopType.Restart)
             .SetEase(Ease.Linear);
 
-        _midleBody.DORotate(new Vector3(0f, currentLevel > 1 ? -360f : 360f, 0f), 1f, RotateMode.LocalAxisAdd)
+        _midleBody.DORotate(new Vector3(0f, currentLevel > 1 ? -360f : 360f, 0f), 1f,
+                RotateMode.LocalAxisAdd)
             .SetLoops(-1, LoopType.Restart)
             .SetEase(Ease.Linear);
 
@@ -64,10 +71,7 @@ public class AnimationModelTower : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         sequence.Append(_midleBody.DOLocalMove(Vector3.zero, 0.5f));
         sequence.Join(topBody.DOLocalMove(Vector3.zero, 0.3f).SetDelay(0.2f));
-        sequence.AppendCallback(() =>
-        {
-            sequence.Kill();
-        });
+        sequence.AppendCallback(() => { sequence.Kill(); });
         await sequence.AsyncWaitForCompletion();
     }
 
@@ -82,10 +86,7 @@ public class AnimationModelTower : MonoBehaviour
 
         sequence.Join(topBody.DOLocalMove(new Vector3(0, -1, 0), 0.1f).SetDelay(0.15f));
         sequence.Join(_midleBody.DOLocalMove(new Vector3(0, -0.35f, 0), 0.1f).SetDelay(0.15f));
-        sequence.AppendCallback(() =>
-        {
-            sequence.Kill();
-        });
+        sequence.AppendCallback(() => { sequence.Kill(); });
         await sequence.AsyncWaitForCompletion();
     }
 
@@ -103,5 +104,10 @@ public class AnimationModelTower : MonoBehaviour
         });
         sequence.Play();
         await sequence.AsyncWaitForCompletion();
+    }
+
+    private void StopAnim(bool isStop)
+    {
+        if (isStop) Pause();
     }
 }

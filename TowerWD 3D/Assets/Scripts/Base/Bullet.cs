@@ -1,6 +1,4 @@
 using CanasSource;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum BulletState
@@ -49,7 +47,7 @@ public abstract class Bullet : MonoBehaviour
     public Enemy target { get; private set; }
     public BulletStat stat { get; private set; }
     public BulletState state { get; protected set; }
-    protected InGameController gameController => Singleton<InGameController>.Instance;
+    protected InGameController inGameController => Singleton<InGameController>.Instance;
 
     [SerializeField] protected BulletDirectionType bulletDirectionType;
 
@@ -60,9 +58,9 @@ public abstract class Bullet : MonoBehaviour
         stat = new BulletStat(owner.model.Atk, owner.model.ProjectileSpeed);
     }
 
-    private void Update()
+    private void Update()   
     {
-        LogicUpdate(Time.deltaTime);
+        LogicUpdate(inGameController.gameSpeed);
     }
 
     private void FixedUpdate()

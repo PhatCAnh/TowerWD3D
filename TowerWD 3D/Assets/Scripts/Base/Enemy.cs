@@ -78,7 +78,7 @@ public abstract class Enemy : MonoBehaviour
     private void Update()
     {
         if (isStop) return;
-        LogicUpdate(Time.deltaTime);
+        LogicUpdate(inGameController.gameSpeed);
     }
 
     private void FixedUpdate()
@@ -128,7 +128,7 @@ public abstract class Enemy : MonoBehaviour
 
     private void UpdateMove(float deltaTime)
     {
-        Moving(target);
+        Moving(target, deltaTime);
         if (Vector3.Distance(target.position, transform.position) < 0.1f)
         {
             if (target.TryGetComponent(out Food food))
@@ -195,10 +195,10 @@ public abstract class Enemy : MonoBehaviour
         isStop = true;
     }
 
-    private void Moving(Transform mapPoint)
+    private void Moving(Transform mapPoint, float timeSpeed)
     {
         Vector3 _direction = mapPoint.position - transform.position;
-        transform.Translate(model.MoveSpeed * Time.deltaTime * _direction.normalized);
+        transform.Translate(model.MoveSpeed * timeSpeed * _direction.normalized);
     }
 
     private void UpdateSkill(float deltaTime)

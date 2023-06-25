@@ -6,6 +6,7 @@ using State;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using static UnityEngine.GraphicsBuffer;
 
 [System.Serializable]
@@ -21,18 +22,20 @@ public class InGameController : MonoBehaviour
     private int _totalCoin;
     private int _countEnemy = 0;
     private int _countTower = 0;
-
-
+    private float speedOfGame = 1f;
+    
     public List<MapPoint> mapPoints = new(); //will delete
-    public List<Enemy> enemies = new();
+    public List<Enemy> listEnemy = new();
     public List<Food> foods = new();
+    public List<Tower> listTower = new();
 
     public GameObject Parent_HealthBar;
     public Transform Parent_Bullet;
     public Transform Parent_Enemy;
     public BoxFood Parent_Food;
 
-
+    public float gameSpeed => speedOfGame * Time.deltaTime;
+    
     public AllWave wave = new();
 
     public int Coin
@@ -62,6 +65,12 @@ public class InGameController : MonoBehaviour
         wave.LogicUpdate(Time.deltaTime);
     }
 
+    private void StopObject()
+    {
+        listEnemy.ForEach(enemy => enemy.isStop = true);
+        listTower.ForEach(tower => tower.isStop = true);
+    }
+
     public bool UpLevelTower(Tower tower)
     {
         TowerStat towerStat = _dataGame.LoadConfigTowerStat(tower.stat.id, tower.stat.levelEvolution + 1);
@@ -88,10 +97,17 @@ public class InGameController : MonoBehaviour
 
     public void EnemyDie(Enemy enemy, bool isDestroyObject = true)
     {
-        enemies.Remove(enemy);
+        listEnemy.Remove(enemy);
         Coin = enemy.model.Coin;
         CheckWinGame();
         if (isDestroyObject) Destroy(enemy.gameObject);
+    }
+
+    public void DestroyTower(Tower tower)
+    {
+        listTower.Remove(tower);
+        //give coin
+        Destroy(tower.gameObject);
     }
 
     public Transform GetMapPoint(int pathPoint, int index) //will delete
@@ -127,6 +143,14 @@ public class InGameController : MonoBehaviour
     {
     }
 
+    public void StopGame()
+    {
+        speedOfGame = 0f;
+        StopObject();
+        Singleton<Observer>.Instance.Invoke("StopGame", true);
+    }
+    
+
     public Enemy CreateEnemy(string id, int pathPoint)
     {
         var enemy = Instantiate(_dataGame.GetPrefab(id), GetStartPoint(pathPoint).position, Quaternion.identity,
@@ -134,7 +158,7 @@ public class InGameController : MonoBehaviour
         var hb = Instantiate(_dataGame.GetPrefab("HealthBar"), Parent_HealthBar.transform).GetComponent<HealthBar>();
         enemy.Init(pathPoint, _dataGame.LoadConfigEnemyStat(id), hb);
         hb.Init(enemy);
-        enemies.Add(enemy);
+        listEnemy.Add(enemy);
         return enemy;
     }
 
@@ -148,6 +172,7 @@ public class InGameController : MonoBehaviour
         skin._midleBody.GetComponent<MeshRenderer>().material = material;
         skin.topBody.GetComponent<MeshRenderer>().material = material;
         tower.Init(_dataGame.LoadConfigTowerStat(id));
+        listTower.Add(tower);
         return tower;
     }
 
@@ -181,7 +206,7 @@ public class InGameController : MonoBehaviour
 
     public void CheckWinGame()
     {
-        if (enemies.Count == 0 && wave.state == WaveState.End)
+        if (listEnemy.Count == 0 && wave.state == WaveState.End)
         {
             WinGame();
         }
@@ -189,7 +214,7 @@ public class InGameController : MonoBehaviour
 
     public void EnemyCompleteTakeFood(Enemy enemy)
     {
-        enemies.Remove(enemy);
+        listEnemy.Remove(enemy);
         foods.Remove(enemy.isPicked);
         enemy.isPicked.Lost();
         enemy.healthBar.Destroy();

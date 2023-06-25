@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638231396910336366
-    m_Hash: 2317920676
+      ticks: 638232900672486730
+    m_Hash: 3472897051
   m_LockFileStatus:
     m_FilePath: C:/Users/ADMIN/Desktop/TowerWD3D/TowerWD 3D/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638231396910418760
-    m_Hash: 924076551
+      ticks: 638232900672550987
+    m_Hash: 1478049304
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
@@ -148,12 +148,12 @@ m_ResolvedPackages:
     deprecationMessage: 
   isDeprecated: 0
   deprecationMessage: 
-- packageId: com.unity.collab-proxy@2.0.1
+- packageId: com.unity.collab-proxy@2.0.5
   testable: 0
   isDirectDependency: 1
-  version: 2.0.1
+  version: 2.0.5
   source: 1
-  resolvedPath: C:\Users\ADMIN\Desktop\TowerWD3D\TowerWD 3D\Library\PackageCache\com.unity.collab-proxy@2.0.1
+  resolvedPath: C:\Users\ADMIN\Desktop\TowerWD3D\TowerWD 3D\Library\PackageCache\com.unity.collab-proxy@2.0.5
   assetPath: Packages/com.unity.collab-proxy
   name: com.unity.collab-proxy
   displayName: Version Control
@@ -162,10 +162,10 @@ m_ResolvedPackages:
     email: 
     url: 
   category: Editor
-  type: asset
-  description: The package gives you the ability to use the Unity Version Control
-    in the Unity editor. To use Unity Version Control, a subscription is required.
-    Learn more about how you can get started for free by visiting plasticscm.com.
+  type: assets
+  description: The package gives you the ability to use Unity Version Control in
+    the Unity editor. To use Unity Version Control, a subscription is required. Learn
+    more about how you can get started for free by visiting plasticscm.com.
   status: 0
   errors: []
   versions:
@@ -275,13 +275,13 @@ m_ResolvedPackages:
     configSource: 0
   hideInEditor: 0
   isAssetStorePackage: 0
-  datePublishedTicks: 638125977010000000
+  datePublishedTicks: 638218079810000000
   documentationUrl: https://docs.unity3d.com/Packages/com.unity.collab-proxy@2.0/manual/index.html
   hasRepository: 1
   repository:
     type: git
     url: https://github.cds.internal.unity3d.com/unity/com.unity.cloud.collaborate.git
-    revision: 8740b4e630f877841cfa8e22ddfbcb237b70a9e6
+    revision: 7f68049e8cae5b51ad0d17cc01b8c6e802bf3866
     path: 
   unityLifecycle:
     version: 2.0.0

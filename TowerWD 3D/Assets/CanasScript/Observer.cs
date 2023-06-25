@@ -22,6 +22,8 @@ public class DataEventChange
 public class Observer : MonoBehaviour
 {
     private Dictionary<string, UnityEvent<DataEventChange>> _dictionaryEventChange = new();
+    private Dictionary<string, UnityEvent<object>> _dictionaryEvent = new();
+
     private void Awake()
     {
         Singleton<Observer>.Instance = this;
@@ -49,7 +51,7 @@ public class Observer : MonoBehaviour
         }
     }
 
-    public void UnListen(string id, UnityAction<DataEventChange> action)
+    public void UnListenEventChange(string id, UnityAction<DataEventChange> action)
     {
         if (_dictionaryEventChange.TryGetValue(id, out var unityEvent))
         {
@@ -57,8 +59,43 @@ public class Observer : MonoBehaviour
         }
     }
 
-    public void Clear()
+    public void ClearEventChange()
     {
         _dictionaryEventChange.Clear();
+    }
+
+    public void Invoke(string id, object value)
+    {
+        if (_dictionaryEvent.TryGetValue(id, out var unityEvent))
+        {
+            unityEvent.Invoke(value);
+        }
+    }
+
+    public void AddListener(string id, UnityAction<object> action)
+    {
+        if (_dictionaryEvent.TryGetValue(id, out var unityEvent))
+        {
+            unityEvent.AddListener(action);
+        }
+        else
+        {
+            unityEvent = new UnityEvent<object>();
+            unityEvent.AddListener(action);
+            _dictionaryEvent.Add(id, unityEvent);
+        }
+    }
+
+    public void UnListen(string id, UnityAction<object> action)
+    {
+        if (_dictionaryEvent.TryGetValue(id, out var unityEvent))
+        {
+            unityEvent.RemoveListener(action);
+        }
+    }
+
+    public void ClearEvent()
+    {
+        _dictionaryEvent.Clear();
     }
 }
