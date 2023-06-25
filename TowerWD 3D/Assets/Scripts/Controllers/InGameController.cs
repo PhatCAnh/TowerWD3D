@@ -38,6 +38,8 @@ public class InGameController : MonoBehaviour
     
     public AllWave wave = new();
 
+    private bool isStop;
+
     public int Coin
     {
         get => _totalCoin;
@@ -62,14 +64,10 @@ public class InGameController : MonoBehaviour
 
     private void Update()
     {
-        wave.LogicUpdate(Time.deltaTime);
+        wave.LogicUpdate(gameSpeed);
     }
 
-    private void StopObject()
-    {
-        listEnemy.ForEach(enemy => enemy.isStop = true);
-        listTower.ForEach(tower => tower.isStop = true);
-    }
+    
 
     public bool UpLevelTower(Tower tower)
     {
@@ -143,11 +141,18 @@ public class InGameController : MonoBehaviour
     {
     }
 
-    public void StopGame()
+    public void StopAndResumeGame()
     {
-        speedOfGame = 0f;
-        StopObject();
-        Singleton<Observer>.Instance.Invoke("StopGame", true);
+        if (isStop)
+        {
+            Time.timeScale = 1;
+            isStop = false;
+        }
+        else
+        {
+            Time.timeScale = 0;
+            isStop = true;
+        }
     }
     
 
@@ -219,5 +224,17 @@ public class InGameController : MonoBehaviour
         enemy.isPicked.Lost();
         enemy.healthBar.Destroy();
         Destroy(enemy.gameObject);
+    }
+    
+    private void StopObject()
+    {
+        listEnemy.ForEach(enemy => enemy.isStop = true);
+        listTower.ForEach(tower => tower.isStop = true);
+    }
+
+    private void UnstopObject()
+    {
+        listEnemy.ForEach(enemy => enemy.isStop = false);
+        listTower.ForEach(tower => tower.isStop = false);
     }
 }

@@ -15,11 +15,6 @@ public class AnimationModelTower : MonoBehaviour
     private bool isStop;
     public Tower tower => GetComponent<Tower>();
 
-    private void Start()
-    {
-        Singleton<Observer>.Instance.AddListener("StopGame", param => StopAnim((bool)param));
-    }
-
     public async UniTask AppearTower()
     {
         await SetAnimAppearTower();
@@ -104,10 +99,5 @@ public class AnimationModelTower : MonoBehaviour
         });
         sequence.Play();
         await sequence.AsyncWaitForCompletion();
-    }
-
-    private void StopAnim(bool isStop)
-    {
-        if (isStop) Pause();
     }
 }
